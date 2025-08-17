@@ -1,6 +1,7 @@
 {
-  "name": "pilatesbackend",
+  "name": "aimnk-backend",
   "version": "1.0.0",
+  "description": "Backend para aplicación Aimnk - Sistema de gestión de estaciones y QnA",
   "main": "dist/src/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -8,10 +9,9 @@
     "build": "tsc",
     "start": "node dist/src/app.js"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["aimnk", "backend", "stations", "qna", "express", "mongodb"],
+  "author": "Valentin Rigoni",
   "license": "ISC",
-  "description": "",
   "_moduleAliases": {
     "@server": "src/server",
     "@config": "src/config",
