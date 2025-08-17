@@ -9,7 +9,14 @@
     "build": "tsc",
     "start": "node dist/src/app.js"
   },
-  "keywords": ["aimnk", "backend", "stations", "qna", "express", "mongodb"],
+  "keywords": [
+    "aimnk",
+    "backend",
+    "stations",
+    "qna",
+    "express",
+    "mongodb"
+  ],
   "author": "Valentin Rigoni",
   "license": "ISC",
   "_moduleAliases": {

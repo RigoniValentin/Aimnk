@@ -1,9 +1,11 @@
 "# Aimnk Backend
 
 ## Descripción
+
 Backend para la aplicación Aimnk - Sistema integral de gestión de estaciones, QnA y autenticación.
 
 ## Características principales
+
 - ✅ Sistema de estaciones con múltiples endpoints
 - ✅ Sistema QnA con administración
 - ✅ Autenticación JWT
@@ -13,6 +15,7 @@ Backend para la aplicación Aimnk - Sistema integral de gestión de estaciones, 
 - ✅ Sistema de notificaciones por email
 
 ## Tecnologías
+
 - **Backend**: Node.js + TypeScript + Express
 - **Base de datos**: MongoDB + Mongoose
 - **Autenticación**: JWT
@@ -56,16 +59,19 @@ FRONT_ORIGINS=https://tu-dominio.com
 ## API Endpoints
 
 ### Autenticación
+
 - `POST /api/v1/auth/login` - Login de usuario
 - `POST /api/v1/auth/register` - Registro de usuario
 - `POST /api/v1/auth/forgot-password` - Recuperar contraseña
 
 ### Estaciones
+
 - `GET /api/v1/stations/verdad` - Obtener datos de estación Verdad
 - `PUT /api/v1/stations/verdad` - Actualizar estación Verdad
 - `GET /api/v1/stations/summary` - Resumen de todas las estaciones
 
 ### QnA
+
 - `GET /api/v1/qna` - Listar preguntas públicas
 - `POST /api/v1/qna` - Crear pregunta (usuario autenticado)
 - `GET /api/v1/qna/admin/pending` - Preguntas pendientes (admin)
@@ -86,4 +92,5 @@ src/
 ```
 
 ## Licencia
-ISC" 
+
+ISC"
