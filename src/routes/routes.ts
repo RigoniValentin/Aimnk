@@ -6,8 +6,6 @@ import {
   updateUser,
   deleteUser,
   getUsersSubscriptionInfo,
-  updateUserCapacitations,
-  updateUserCapacitationsByEmail,
 } from "@controllers/userController";
 import {
   findRoles,
@@ -26,31 +24,7 @@ import {
 import { getPermissions, verifyToken } from "@middlewares/auth";
 import { checkRoles } from "@middlewares/roles";
 import { checkSubscription } from "@middlewares/checkSubscription";
-import {
-  answerQuestionVideo1,
-  answerQuestionVideo2,
-  createQuestion,
-  findQuestions,
-  rejectQuestion,
-} from "@controllers/questionController";
-import {
-  createVideo,
-  deleteVideo,
-  deleteVideoByUrl,
-  findVideoById,
-  findVideos,
-  updateVideo,
-  updateVideoByCombo,
-} from "@controllers/videosController";
-import {
-  createTraining,
-  updateCupos,
-  getCupos,
-  getTrainings,
-} from "@controllers/trainingController";
 // Importar rutas de la tienda
-import categoryRoutes from "./categoryRoutes";
-import productRoutes from "./productRoutes";
 import {
   applyCoupon,
   cancelPayment,
@@ -62,9 +36,17 @@ import {
   extendUserSubscription,
 } from "@controllers/paymentController";
 import { sendResetPasswordEmail } from "@services/emailService";
-import { getExamples, saveExamples } from "@controllers/exampleController";
-import { getChatHistory, deleteChatHistory } from "@controllers/chatController";
+
 import { get } from "mongoose";
+import stationsRoutes from "./stationsRoutes";
+import {
+  listAllQna,
+  listMineQna,
+  createQna,
+  listPendingQna,
+  listAnsweredQna,
+  answerQna,
+} from "@controllers/qnaController";
 
 const router = Router();
 
@@ -100,108 +82,16 @@ export default () => {
   router.get("/users/:id", verifyToken, getPermissions, findUserById);
   router.post("/users", verifyToken, getPermissions, checkRoles, createUser);
   router.put("/users/:id", verifyToken, getPermissions, updateUser);
-  router.put(
-    "/users/:id/capacitations",
-    verifyToken,
-    getPermissions,
-    updateUserCapacitations
-  );
-  router.put(
-    "/users/email/:email/capacitations",
-    verifyToken,
-    getPermissions,
-    updateUserCapacitationsByEmail
-  );
   router.delete("/users/:id", verifyToken, getPermissions, deleteUser);
   //#endregion
 
   //#region Roles Routes
   router.get("/roles", verifyToken, getPermissions, findRoles);
   router.get("/roles/:id", verifyToken, getPermissions, findRolesById);
-  router.post("/roles", verifyToken, getPermissions, createRoles);
+  router.post("/roles", /*verifyToken, getPermissions,*/ createRoles);
   router.put("/roles/:id", verifyToken, getPermissions, updateRoles);
   router.delete("/roles/:id", verifyToken, getPermissions, deleteRoles);
   //#endregion
-
-  //#region Question Routes
-  router.post(
-    "/questions",
-    verifyToken,
-    checkSubscription,
-    getPermissions,
-    createQuestion
-  );
-  router.get(
-    "/questions",
-    verifyToken,
-    checkSubscription,
-    getPermissions,
-    findQuestions
-  );
-  router.put(
-    "/questions/:id/answer/1",
-    verifyToken,
-    checkSubscription,
-    getPermissions,
-    answerQuestionVideo1
-  );
-  router.put(
-    "/questions/:id/answer/2",
-    verifyToken,
-    checkSubscription,
-    getPermissions,
-    answerQuestionVideo2
-  );
-  router.put("/questions/:id/reject", verifyToken, rejectQuestion);
-  //#endregion
-
-  //#region Videos Routes
-  router.post(
-    "/videos",
-    verifyToken,
-    checkSubscription,
-    getPermissions,
-    checkRoles,
-    createVideo
-  );
-  router.get("/videos", findVideos);
-  router.get("/videos/:id", findVideoById);
-  router.put(
-    "/videos/:id",
-    verifyToken,
-    getPermissions,
-    checkRoles,
-    updateVideo
-  );
-  router.put(
-    "/videos-by-combo",
-    verifyToken,
-    getPermissions,
-    checkRoles,
-    updateVideoByCombo
-  );
-  router.delete(
-    "/videos/:id",
-    verifyToken,
-    getPermissions,
-    checkRoles,
-    deleteVideo
-  );
-  router.delete(
-    "/videos",
-    verifyToken,
-    getPermissions,
-    checkRoles,
-    deleteVideoByUrl
-  );
-  //#endregion
-
-  // #region Trainings Routes
-  router.post("/trainings", verifyToken, getPermissions, createTraining);
-  router.put("/trainings/:id", verifyToken, getPermissions, updateCupos);
-  router.get("/trainings/:id", verifyToken, getCupos);
-  router.get("/trainings", getTrainings);
-  // #endregion
 
   // #region Payments Routes
   router.get("/create-order", verifyToken, createOrder);
@@ -235,25 +125,21 @@ export default () => {
   );
   // #endregion
 
-  // #region Example Routes
-  router.get("/examples", getExamples);
-  router.put("/examples", saveExamples);
+  // #region Stations Routes
+  // Monta todas las rutas de estaciones bajo /api/v1/stations
+  router.use("/stations", stationsRoutes);
   // #endregion
 
-  // #region Chat Routes
-  // Obtener historial (para todos los usuarios)
-  router.get("/history", verifyToken, getChatHistory);
-
-  // Eliminar historial (acceso restringido, por ejemplo admin)
-  router.delete("/history", verifyToken, getPermissions, deleteChatHistory);
-  // #endregion
-
-  // #region Store Routes
-  // Rutas de categorías de la tienda
-  router.use("/categories", categoryRoutes);
-
-  // Rutas de productos de la tienda
-  router.use("/products", productRoutes);
+  // #region QnA Routes
+  // Público
+  router.get("/qna", listAllQna);
+  // Autenticado (user/admin)
+  router.get("/qna/mine", verifyToken, listMineQna);
+  router.post("/qna", verifyToken, createQna);
+  // Admin
+  router.get("/qna/admin/pending", verifyToken, listPendingQna);
+  router.get("/qna/admin/answered", verifyToken, listAnsweredQna);
+  router.post("/qna/admin/answer/:id", verifyToken, answerQna);
   // #endregion
 
   return router;

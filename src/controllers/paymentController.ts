@@ -47,8 +47,8 @@ export const createOrder = async (
 
   const baseUrl =
     process.env.NODE_ENV === "production"
-      ? "https://pilatestransmissionsarah.com"
-      : "https://pilatestransmissionsarah.com";
+      ? "https://ainmkhumanareal.com"
+      : "http://localhost:3010";
 
   const order = {
     intent: "CAPTURE",
@@ -56,12 +56,12 @@ export const createOrder = async (
       {
         amount: {
           currency_code: "USD",
-          value: "13.00",
+          value: "14.00",
         },
       },
     ],
     application_context: {
-      brand_name: "Pilates Transmission Sarah",
+      brand_name: "Ainmk",
       landing_page: "NO_PREFERENCE",
       user_action: "PAY_NOW",
       return_url: `${baseUrl}/api/v1/capture-order?state=${userId}`, // Ruta del backend para capturar la orden
@@ -131,7 +131,7 @@ export const captureOrder = async (
       return;
     }
 
-    // Buscar el rol "paid_user" en la base de datos utilizando RolesService
+    // Buscar el rol "user" en la base de datos utilizando RolesService
     const paidUserRole = await rolesService.findRoles({ name: "user" });
     if (!paidUserRole || paidUserRole.length === 0) {
       res.status(500).json({ message: "Role 'user' not found" });
@@ -159,7 +159,7 @@ export const captureOrder = async (
       return;
     }
     const expirationDate = new Date(paymentDate);
-    expirationDate.setDate(expirationDate.getDate() + 30);
+    expirationDate.setDate(expirationDate.getDate() + 99999);
 
     user.roles = [paidUserRole[0]]; // Agregar el rol "paid_user"
     user.subscription = {
@@ -169,7 +169,13 @@ export const captureOrder = async (
     };
     await user.save();
 
-    res.redirect(`${HOST}/pagoAprobado`);
+    // ✅ CAMBIO PRINCIPAL: Redireccionar al FRONTEND
+    const frontendUrl =
+      process.env.NODE_ENV === "production"
+        ? "https://ainmkhumanareal.com"
+        : "https://localhost:5173"; // FRONTEND URL
+
+    res.redirect(`${frontendUrl}/pagoAprobado`);
   } catch (error) {
     console.error("Error capturing order:", error);
     res.status(500).json({ message: "Error processing payment", error });
@@ -177,7 +183,13 @@ export const captureOrder = async (
 };
 
 export const cancelPayment = (req: Request, res: Response) => {
-  res.redirect("/");
+  // ✅ También corregir la redirección de cancelación
+  const frontendUrl =
+    process.env.NODE_ENV === "production"
+      ? "https://ainmkhumanareal.com"
+      : "https://localhost:5173"; // FRONTEND URL
+
+  res.redirect(`${frontendUrl}/`);
 };
 //#endregion
 
@@ -197,8 +209,10 @@ export const createPreference = async (req: Request, res: Response) => {
   try {
     const successUrl =
       process.env.NODE_ENV === "production"
-        ? `https://pilatestransmissionsarah.com/pagoAprobado?state=${userId}`
-        : `http://localhost:3010/pagoAprobado?state=${userId}`;
+        ? `https://ainmkhumanareal.com/pagoAprobado?state=${userId}`
+        : `https://localhost:5173/pagoAprobado?state=${userId}`;
+
+    console.log("successUrl:", successUrl);
 
     const body = {
       items: req.body.map((item: any) => ({
@@ -214,6 +228,8 @@ export const createPreference = async (req: Request, res: Response) => {
       },
       auto_return: "approved",
     };
+
+    console.log("body enviado a MP:", body);
 
     const preference = new Preference(mercadoPagoClient);
     const result = await preference.create({ body });
@@ -275,7 +291,7 @@ export const capturePreference = async (
 
     const paymentDate = new Date();
     const expirationDate = new Date(paymentDate);
-    expirationDate.setDate(expirationDate.getDate() + 30);
+    expirationDate.setDate(expirationDate.getDate() + 99999);
     console.log(
       "capturePreference: Calculated paymentDate =",
       paymentDate,
@@ -291,12 +307,16 @@ export const capturePreference = async (
     };
     await user.save();
 
-    const successUrl =
-      process.env.NODE_ENV === "production"
-        ? `https://pilatestransmissionsarah.com/pagoAprobado?state=${userId}`
-        : `http://localhost:3010/pagoAprobado?state=${userId}`;
-    console.log("capturePreference: Redirecting to", successUrl);
-    res.redirect(successUrl);
+    const isFrontend = req.headers["x-frontend-request"] === "true";
+    if (isFrontend) {
+      res.status(200).json({ ok: true });
+    } else {
+      const successUrl =
+        process.env.NODE_ENV === "production"
+          ? `https://ainmkhumanareal.com/pagoAprobado?state=${userId}`
+          : `https://localhost:5173/pagoAprobado?state=${userId}`;
+      res.redirect(successUrl);
+    }
   } catch (error) {
     console.log("capturePreference: Error capturing MP payment:", error);
     res.status(500).json({ message: "Error processing MP payment", error });

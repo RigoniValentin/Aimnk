@@ -1,0 +1,114 @@
+### STATIONS - Verdad
+@host = http://localhost:3010
+@base = {{host}}/api/v1/stations
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OWE2NGYyMWI0MmFiZDFmNDg3ZGRjNCIsImVtYWlsIjoidXNlcnRlc3RAZ21haWwuY29tIiwidXNlcm5hbWUiOiJ1c2VyVGVzdCIsInJvbGVzIjpbeyJfaWQiOiI2ODlhNjIwOTFiNDJhYmQxZjQ4N2RkYjYiLCJuYW1lIjoidXNlciIsInBlcm1pc3Npb25zIjpbInF1ZXN0aW9uc193cml0ZSwgcXVlc3Rpb25zX3JlYWQiXSwiY3JlYXRlZEF0IjoiMjAyNS0wOC0xMVQyMTozNTowNS4xMTdaIiwidXBkYXRlZEF0IjoiMjAyNS0wOC0xMVQyMTozNTowNS4xMTdaIn1dLCJuYXRpb25hbGl0eSI6IkFyZ2VudGlubyIsImxvY2FsaXR5IjoiQ0JBIiwiYWdlIjoyNSwiY2FwU2VyZXNBcnRlIjpmYWxzZSwiY2FwVGhyIjpmYWxzZSwiY2FwUGhyIjpmYWxzZSwiY2FwTWF0IjpmYWxzZSwiY2FwVW9yIjpmYWxzZSwiY2FwUmVoIjpmYWxzZSwiY2FwVml2IjpmYWxzZSwiY2FwVEVMQSI6ZmFsc2UsImNhcE5PX0NPTlZFTkNJT05BTCI6ZmFsc2UsImNhcERBTlpBX0RSQUdPTiI6ZmFsc2UsImNhcFBBUkFEQV9NQU5PUyI6ZmFsc2UsImNhcERBTlpBX0FFUkVBX0FSTkVTIjpmYWxzZSwiY2FwQ1VCTyI6ZmFsc2UsImNhcFBPTEVfQUVSRU8iOmZhbHNlLCJjYXBSRUQiOmZhbHNlLCJjYXBDT05UT1JTSU9OIjpmYWxzZSwiY2FwQVJPIjpmYWxzZSwiY2FwQUNST19UUkFJTklORyI6ZmFsc2UsImlhdCI6MTc1NTE0NDc1OCwiZXhwIjoxNzU1MTU1NTU4fQ._z-wIR6dv1qAOl1K4H4_656cxpawYpP_WkD7lm1A-G4
+
+### Get Verdad station data
+GET {{base}}/verdad
+Authorization: Bearer {{token}}
+
+### Put Verdad station data
+PUT {{base}}/verdad
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "tableArchetypes": [
+    ["father", "father"],
+    ["father", "child"],
+    ["child", "trickster"],
+    ["child", "child"],
+    ["trickster", "trickster"],
+    ["child", "child"],
+    ["trickster", "child"]
+  ]
+}
+
+### STATIONS - Pilares
+
+### Get Pilares station data
+GET {{base}}/pilares
+Authorization: Bearer {{token}}
+
+### Put Pilares station data
+PUT {{base}}/pilares
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "halaganTags": ["Empática", "Humilde", "Resiliente", "Optimista"],
+  "criticanTags": ["Extrovertida", "Íntegra", "Responsable", "Intrépida"],
+  "escasezInputs": ["a","b","c","d","e","f","g","h"],
+  "abundanciaInputs": ["a","b","c","d","e","f","g","h"],
+  "potencialUniverso": ["a","b","c","d","e","f","g","h"],
+  "fraseAbundancia": "Frase que inspira la dirección de los pasos",
+  "frasePotencialUniverso": "Frase general de potencia universo"
+}
+
+### STATIONS - CodInconciente
+
+### Get CodInconciente
+GET {{base}}/codinconciente
+Authorization: Bearer {{token}}
+
+### Put CodInconciente
+PUT {{base}}/codinconciente
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "data": {
+    "codificaciones": ["ABANDONO","AYUDA-RESCATE"],
+    "expansiones": [
+      "INDIVIDUALIZACION: Soy en mi, los ambientes no me absorben",
+      "LA GRATITUD: Conecto con la aceptación de ser un ser en aprendizaje continuo"
+    ],
+    "lugares": ["Fluyo","No Fluyo"],
+    "acciones1": ["acción A1","acción A2","acción A3"],
+    "acciones2": ["acción B1","acción B2","acción B3"]
+  }
+}
+
+### STATIONS - Tarot
+
+### Get Tarot data
+GET {{base}}/tarot
+Authorization: Bearer {{token}}
+
+### Put Tarot reading (arbol:materno)
+PUT {{base}}/tarot
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "readingKey": "arbol:materno",
+  "reading": {
+    "type": "arbol",
+    "linaje": "materno",
+    "selectedCards": [
+      { "id": 4, "name": "Tierra", "category": "elementos", "role": "RAIZ" },
+      { "id": 7, "name": "Pájaro Carpintero", "category": "ambientes", "role": "TRONCO" },
+      { "id": 10, "name": "Ciprés", "category": "arboles", "role": "CORTEZA" },
+      { "id": 12, "name": "Higuera", "category": "arboles", "role": "RAMA" },
+      { "id": 14, "name": "Manzano", "category": "arboles", "role": "FRUTO/SEMILLA" }
+    ],
+    "integrationPhrase": "Integro fuerza y nutrición en mi árbol materno."
+  }
+}
+
+### STATIONS - Humano Real
+
+### Get Humano Real data
+GET {{base}}/humanoreal
+Authorization: Bearer {{token}}
+
+### Put Humano Real data
+PUT {{base}}/humanoreal
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "soyMas": "Humano",
+  "mi": "Humano",
+  "debeAbrazar": "Cristal"
+}

@@ -1,18 +1,54 @@
 import express, { Application } from "express";
 import path from "path";
+import fs from "fs";
 import routes from "@routes/routes";
 import morgan from "morgan";
-import cors from "cors";
+import cors, { CorsOptions } from "cors";
 import cookieParser from "cookie-parser";
-import { ChatMessage } from "@models/ChatMessage"; // Importar el modelo de mensajes
 
 const app: Application = express();
+
+// Parse FRONT_ORIGINS env (coma-separado) y FRONT_ORIGIN (single) en una lista
+const fromEnvList = (process.env.FRONT_ORIGINS || "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter(Boolean);
+const fromEnvSingle = (process.env.FRONT_ORIGIN || "").trim();
+
+const allowedOrigins = [
+  ...fromEnvList,
+  fromEnvSingle || undefined,
+  "http://localhost:5173",
+  "https://localhost:5173",
+  process.env.NODE_ENV === "production"
+    ? "https://pilatestransmissionsarah.com"
+    : undefined,
+].filter(Boolean) as string[];
+
+const corsOptions: CorsOptions = {
+  origin: (origin, callback) => {
+    // Permitir requests sin "Origin" (por ejemplo, curl o same-origin)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error("Not allowed by CORS"));
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
 const projectRoot = process.cwd();
 
 app.use(cookieParser());
 app.use(express.json());
 app.use(morgan("dev"));
-app.use(cors());
+// Añadir Vary: Origin para respuestas cacheables y manejar CORS con credenciales
+app.use((req, res, next) => {
+  res.header("Vary", "Origin");
+  next();
+});
+app.use(cors(corsOptions));
+// Responder preflight de forma explícita
+app.options("*", cors(corsOptions));
 
 // Servir archivos de imágenes de productos
 app.use("/uploads", express.static(path.join(projectRoot, "uploads")));
@@ -20,65 +56,28 @@ app.use("/uploads", express.static(path.join(projectRoot, "uploads")));
 // Registrar rutas de la API
 app.use("/api/v1", routes());
 
-// Servir archivos estáticos
-if (process.env.NODE_ENV === "production") {
-  app.use(
-    "/",
-    express.static(path.join(projectRoot, "distFront"), { index: "index.html" })
-  );
-  app.get("*", (req, res) => {
-    return res.sendFile(path.join(projectRoot, "distFront", "index.html"));
+// Servir archivos estáticos del frontend (si existe distFront)
+const distFrontPath = path.join(projectRoot, "distFront");
+const hasDistFront = fs.existsSync(distFrontPath);
+
+if (hasDistFront) {
+  app.use("/", express.static(distFrontPath, { index: "index.html" }));
+  // Fallback de SPA solo para rutas que NO comienzan con /api
+  app.get(/^\/(?!api).*/, (req, res) => {
+    return res.sendFile(path.join(distFrontPath, "index.html"));
   });
-} else {
-  app.use(
-    "/",
-    express.static(path.join(projectRoot, "distFront"), { index: "index.html" })
+} else if (process.env.NODE_ENV === "production") {
+  console.warn(
+    "distFront no encontrado; el frontend no se servirá desde este servidor."
   );
-  app.get("*", (req, res) => {
-    return res.sendFile(path.join(projectRoot, "distFront", "index.html"));
-  });
 }
 
-// ── Agregar Socket.IO ──
 import { createServer } from "http";
-import { Server as SocketIOServer } from "socket.io";
 
 // Crear servidor HTTP usando la app de Express
 const httpServer = createServer(app);
 
-// Inicializar Socket.IO
-const io = new SocketIOServer(httpServer, {
-  cors: { origin: "*", methods: ["GET", "POST"] },
-});
-
-// Ejemplo de configuración de eventos
-io.on("connection", (socket) => {
-  console.log("Socket conectado:", socket.id);
-
-  socket.on("chat message", async (msg: string) => {
-    console.log("Mensaje de chat:", msg);
-    io.emit("chat message", msg);
-    // Guardar el mensaje en la base de datos
-    try {
-      // Se asume que el mensaje viene en el formato "username: mensaje"
-      const [sender] = msg.split(":");
-      await ChatMessage.create({ sender: sender.trim(), message: msg });
-    } catch (error) {
-      console.error("Error al guardar mensaje:", error);
-    }
-  });
-
-  // Listener para el evento "chat toggled"
-  socket.on("chat toggled", (payload: any) => {
-    console.log("Chat toggled:", payload);
-    // Retransmitir el evento a todos los demás clientes conectados
-    socket.broadcast.emit("chat toggled", payload);
-  });
-
-  socket.on("disconnect", () => {
-    console.log("Socket desconectado:", socket.id);
-  });
-});
+// Socket.IO eliminado del proyecto
 
 // Lógica de cierre gracioso en server.ts
 const shutdown = () => {

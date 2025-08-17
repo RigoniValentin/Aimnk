@@ -17,8 +17,8 @@ const PORT = process.env.PORT || 3010;
 export const HOST =
   process.env.NODE_ENV === "production"
     ? process.env.HOST || "https://pilatestransmissionsarah.com"
-    : "http://localhost:" + PORT;
+    : "https://localhost:" + PORT;
 
 httpServer.listen(PORT, () => {
-  console.log(`Server (with Socket.IO) listening on port ${PORT}`);
+  console.log(`Server listening on port ${PORT}`);
 });

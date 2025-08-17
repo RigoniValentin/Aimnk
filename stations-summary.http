@@ -1,0 +1,28 @@
+@API_BASE_URL = http://localhost:3010/api/v1
+@TOKEN = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OWE2NGYyMWI0MmFiZDFmNDg3ZGRjNCIsImVtYWlsIjoidXNlcnRlc3RAZ21haWwuY29tIiwidXNlcm5hbWUiOiJ1c2VyVGVzdCIsInJvbGVzIjpbeyJfaWQiOiI2ODlhNjIwOTFiNDJhYmQxZjQ4N2RkYjYiLCJuYW1lIjoidXNlciIsInBlcm1pc3Npb25zIjpbInF1ZXN0aW9uc193cml0ZSwgcXVlc3Rpb25zX3JlYWQiXSwiY3JlYXRlZEF0IjoiMjAyNS0wOC0xMVQyMTozNTowNS4xMTdaIiwidXBkYXRlZEF0IjoiMjAyNS0wOC0xMVQyMTozNTowNS4xMTdaIn1dLCJuYXRpb25hbGl0eSI6IkFyZ2VudGlubyIsImxvY2FsaXR5IjoiQ0JBIiwiYWdlIjoyNSwiY2FwU2VyZXNBcnRlIjpmYWxzZSwiY2FwVGhyIjpmYWxzZSwiY2FwUGhyIjpmYWxzZSwiY2FwTWF0IjpmYWxzZSwiY2FwVW9yIjpmYWxzZSwiY2FwUmVoIjpmYWxzZSwiY2FwVml2IjpmYWxzZSwiY2FwVEVMQSI6ZmFsc2UsImNhcE5PX0NPTlZFTkNJT05BTCI6ZmFsc2UsImNhcERBTlpBX0RSQUdPTiI6ZmFsc2UsImNhcFBBUkFEQV9NQU5PUyI6ZmFsc2UsImNhcERBTlpBX0FFUkVBX0FSTkVTIjpmYWxzZSwiY2FwQ1VCTyI6ZmFsc2UsImNhcFBPTEVfQUVSRU8iOmZhbHNlLCJjYXBSRUQiOmZhbHNlLCJjYXBDT05UT1JTSU9OIjpmYWxzZSwiY2FwQVJPIjpmYWxzZSwiY2FwQUNST19UUkFJTklORyI6ZmFsc2UsImlhdCI6MTc1NTIzOTQ1NCwiZXhwIjoxNzU1MjUwMjU0fQ.l76PgoK36Q5lStoSRgWcZrna-GvGz0eHsaCTUWl-bQI
+
+### Resumen de todas las estaciones del usuario autenticado
+GET {{API_BASE_URL}}/stations/summary
+Authorization: Bearer {{TOKEN}}
+Accept: application/json
+
+### Ejemplo de respuesta esperada (200 OK)
+# {
+#   "userId": "6655a0...",
+#   "stations": {
+#     "verdad": { "data": { /* ... */ } | null, "updatedAt": "2025-08-15T12:34:56.000Z" | null },
+#     "pilares": { "data": { /* ... */ } | null, "updatedAt": "..." },
+#     "codinconciente": { "data": { /* ... */ } | null, "updatedAt": "..." },
+#     "tarot": { "data": { /* ... */ } | null, "updatedAt": "..." },
+#     "humanoreal": { "data": { /* ... */ } | null, "updatedAt": "..." },
+#     "artebiologico": { "data": { /* ... */ } | null, "updatedAt": "..." },
+#     "arteemociones": { "data": { /* ... */ } | null, "updatedAt": "..." },
+#     "arteconsciencia": { "data": { /* ... */ } | null, "updatedAt": "..." },
+#     "arteenergia": { "data": { /* ... */ } | null, "updatedAt": "..." }
+#   },
+#   "generatedAt": "2025-08-15T12:34:56.000Z"
+# }
+
+### Caso 401 (sin token o inválido)
+# GET {{API_BASE_URL}}/stations/summary
+# Accept: application/json
