@@ -43,16 +43,18 @@ app.use(morgan("dev"));
 app.use((req, res, next) => {
   res.header("Vary", "Origin");
 
-  // CSP permisivo para PayPal (solo en producción)
+  // CSP optimizado para PayPal (solo en producción)
   if (process.env.NODE_ENV === "production") {
     res.header(
       "Content-Security-Policy",
-      "default-src 'self' 'unsafe-eval' 'unsafe-inline'; " +
-        "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*; " +
-        "style-src 'self' 'unsafe-inline' https://*; " +
-        "img-src 'self' data: https: http:; " +
-        "connect-src 'self' https://*; " +
-        "frame-src 'self' https://*;"
+      "default-src 'self'; " +
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.paypal.com https://*.paypalobjects.com https://www.paypal.com; " +
+        "style-src 'self' 'unsafe-inline' https://*.paypal.com; " +
+        "connect-src 'self' https://*.paypal.com; " +
+        "frame-src 'self' https://*.paypal.com; " +
+        "img-src 'self' data: https://*.paypal.com https://*.paypalobjects.com; " +
+        "font-src 'self' https://*.paypal.com; " +
+        "media-src 'self';"
     );
   }
 
