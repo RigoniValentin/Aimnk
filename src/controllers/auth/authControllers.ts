@@ -162,17 +162,17 @@ export const validateResetToken = async (
       });
       return;
     }
-    res.json({ 
-      valid: true, 
+    res.json({
+      valid: true,
       message: "Token válido",
-      email: user.email 
+      email: user.email,
     });
   } catch (error) {
     console.error("Error en validateResetToken:", error);
-    res.status(500).json({ 
-      valid: false, 
-      message: "Error al validar el token", 
-      error 
+    res.status(500).json({
+      valid: false,
+      message: "Error al validar el token",
+      error,
     });
   }
 };
@@ -183,19 +183,24 @@ export const resetPassword = async (
 ): Promise<void> => {
   try {
     const { token, password, newPassword } = req.body;
-    
+
     // El frontend puede enviar 'password' o 'newPassword'
     const passwordToUpdate = password || newPassword;
-    
+
     if (!passwordToUpdate) {
       res.status(400).json({
         message: "La nueva contraseña es requerida",
       });
       return;
     }
-    
-    console.log("Reset password request:", { token, password, newPassword, passwordToUpdate });
-    
+
+    console.log("Reset password request:", {
+      token,
+      password,
+      newPassword,
+      passwordToUpdate,
+    });
+
     // Buscar usuario a través del token de recuperación
     const user = await userService.findUserByResetToken(token);
     if (
