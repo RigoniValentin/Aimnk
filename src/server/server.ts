@@ -42,6 +42,20 @@ app.use(morgan("dev"));
 // Añadir Vary: Origin para respuestas cacheables y manejar CORS con credenciales
 app.use((req, res, next) => {
   res.header("Vary", "Origin");
+
+  // CSP permisivo para PayPal (solo en producción)
+  if (process.env.NODE_ENV === "production") {
+    res.header(
+      "Content-Security-Policy",
+      "default-src 'self' 'unsafe-eval' 'unsafe-inline'; " +
+        "script-src 'self' 'unsafe-eval' 'unsafe-inline' https://*; " +
+        "style-src 'self' 'unsafe-inline' https://*; " +
+        "img-src 'self' data: https: http:; " +
+        "connect-src 'self' https://*; " +
+        "frame-src 'self' https://*;"
+    );
+  }
+
   next();
 });
 app.use(cors(corsOptions));
