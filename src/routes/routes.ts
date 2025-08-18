@@ -20,6 +20,7 @@ import {
   registerUser,
   forgotPassword,
   resetPassword,
+  validateResetToken,
 } from "@controllers/auth/authControllers";
 import { getPermissions, verifyToken } from "@middlewares/auth";
 import { checkRoles } from "@middlewares/roles";
@@ -68,6 +69,7 @@ export default () => {
     refreshToken
   );
   router.post("/auth/forgot-password", forgotPassword);
+  router.post("/auth/validate-reset-token", validateResetToken);
   router.post("/auth/reset-password", resetPassword);
   //#endregion
 

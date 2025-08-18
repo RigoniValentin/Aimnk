@@ -143,6 +143,40 @@ export const forgotPassword = async (
   }
 };
 
+export const validateResetToken = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { token } = req.body;
+    // Buscar usuario a través del token de recuperación
+    const user = await userService.findUserByResetToken(token);
+    if (
+      !user ||
+      !user.resetPasswordExpires ||
+      user.resetPasswordExpires < new Date()
+    ) {
+      res.status(400).json({
+        valid: false,
+        message: "El token de recuperación es inválido o ha expirado",
+      });
+      return;
+    }
+    res.json({ 
+      valid: true, 
+      message: "Token válido",
+      email: user.email 
+    });
+  } catch (error) {
+    console.error("Error en validateResetToken:", error);
+    res.status(500).json({ 
+      valid: false, 
+      message: "Error al validar el token", 
+      error 
+    });
+  }
+};
+
 export const resetPassword = async (
   req: Request,
   res: Response
