@@ -182,7 +182,20 @@ export const resetPassword = async (
   res: Response
 ): Promise<void> => {
   try {
-    const { token, password } = req.body;
+    const { token, password, newPassword } = req.body;
+    
+    // El frontend puede enviar 'password' o 'newPassword'
+    const passwordToUpdate = password || newPassword;
+    
+    if (!passwordToUpdate) {
+      res.status(400).json({
+        message: "La nueva contraseña es requerida",
+      });
+      return;
+    }
+    
+    console.log("Reset password request:", { token, password, newPassword, passwordToUpdate });
+    
     // Buscar usuario a través del token de recuperación
     const user = await userService.findUserByResetToken(token);
     if (
@@ -196,7 +209,7 @@ export const resetPassword = async (
       return;
     }
     // Actualizar la contraseña (se aplicará el hash en el pre-save)
-    user.password = password;
+    user.password = passwordToUpdate;
     user.resetPasswordToken = undefined;
     user.resetPasswordExpires = undefined;
     await user.save();
