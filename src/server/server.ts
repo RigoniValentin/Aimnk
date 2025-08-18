@@ -20,9 +20,7 @@ const allowedOrigins = [
   fromEnvSingle || undefined,
   "http://localhost:5173",
   "https://localhost:5173",
-  process.env.NODE_ENV === "production"
-    ? "https://pilatestransmissionsarah.com"
-    : undefined,
+  process.env.NODE_ENV === "production" ? "https://viajealser.com" : undefined,
 ].filter(Boolean) as string[];
 
 const corsOptions: CorsOptions = {
