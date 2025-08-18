@@ -47,8 +47,8 @@ export const createOrder = async (
 
   const baseUrl =
     process.env.NODE_ENV === "production"
-      ? "https://ainmkhumanareal.com"
-      : "http://localhost:3010";
+      ? "https://viajealser.com"
+      : "http://localhost:3013";
 
   const order = {
     intent: "CAPTURE",
@@ -172,7 +172,7 @@ export const captureOrder = async (
     // ✅ CAMBIO PRINCIPAL: Redireccionar al FRONTEND
     const frontendUrl =
       process.env.NODE_ENV === "production"
-        ? "https://ainmkhumanareal.com"
+        ? "https://viajealser.com"
         : "https://localhost:5173"; // FRONTEND URL
 
     res.redirect(`${frontendUrl}/pagoAprobado`);
@@ -186,7 +186,7 @@ export const cancelPayment = (req: Request, res: Response) => {
   // ✅ También corregir la redirección de cancelación
   const frontendUrl =
     process.env.NODE_ENV === "production"
-      ? "https://ainmkhumanareal.com"
+      ? "https://viajealser.com"
       : "https://localhost:5173"; // FRONTEND URL
 
   res.redirect(`${frontendUrl}/`);
@@ -209,7 +209,7 @@ export const createPreference = async (req: Request, res: Response) => {
   try {
     const successUrl =
       process.env.NODE_ENV === "production"
-        ? `https://ainmkhumanareal.com/pagoAprobado?state=${userId}`
+        ? `https://viajealser.com/pagoAprobado?state=${userId}`
         : `https://localhost:5173/pagoAprobado?state=${userId}`;
 
     console.log("successUrl:", successUrl);
@@ -313,7 +313,7 @@ export const capturePreference = async (
     } else {
       const successUrl =
         process.env.NODE_ENV === "production"
-          ? `https://ainmkhumanareal.com/pagoAprobado?state=${userId}`
+          ? `https://viajealser.com/pagoAprobado?state=${userId}`
           : `https://localhost:5173/pagoAprobado?state=${userId}`;
       res.redirect(successUrl);
     }
