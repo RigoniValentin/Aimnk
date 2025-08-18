@@ -28,7 +28,8 @@
     "@controllers": "dist/src/controllers",
     "@models": "dist/src/models",
     "@middlewares": "dist/src/middlewares",
-    "types": "dist/src/types"
+    "types": "dist/src/types",
+    "app": "dist/src/app.js"
   },
   "dependencies": {
     "@types/multer": "^1.4.13",
