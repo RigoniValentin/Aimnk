@@ -45,10 +45,8 @@ export const createOrder = async (
     return;
   }
 
-  const baseUrl =
-    process.env.NODE_ENV === "production"
-      ? "https://viajealser.com"
-      : "http://localhost:3013";
+  // Usar HOST centralizado desde app.ts para evitar divergencias entre entornos
+  const baseUrl = HOST;
 
   const order = {
     intent: "CAPTURE",
@@ -56,7 +54,7 @@ export const createOrder = async (
       {
         amount: {
           currency_code: "USD",
-          value: "1.00",
+          value: "5.00",
         },
       },
     ],
@@ -65,7 +63,8 @@ export const createOrder = async (
       landing_page: "NO_PREFERENCE",
       user_action: "PAY_NOW",
       return_url: `${baseUrl}/api/v1/capture-order?state=${userId}`, // Ruta del backend para capturar la orden
-      cancel_url: `${baseUrl}/api/v1/cancel-order`, // Usar ruta API consistente
+      // Mantener compatibilidad con ambos proyectos: alias de cancelación sin /api también disponible
+      cancel_url: `${baseUrl}/api/v1/cancel-order`,
     },
   };
 

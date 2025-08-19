@@ -99,6 +99,8 @@ export default () => {
   router.get("/create-order", verifyToken, createOrder);
   router.get("/capture-order", captureOrder);
   router.get("/cancel-order", cancelPayment);
+  // Alias de compatibilidad usado por el proyecto que funciona
+  router.get("/cancel-payment", cancelPayment);
 
   router.post("/create-preference", verifyToken, createPreference);
   router.get("/capture-preference", capturePreference);
