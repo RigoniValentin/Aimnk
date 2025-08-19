@@ -45,8 +45,10 @@ export const createOrder = async (
     return;
   }
 
-  // Usar HOST centralizado desde app.ts para evitar divergencias entre entornos
-  const baseUrl = HOST;
+  const baseUrl =
+    process.env.NODE_ENV === "production"
+      ? "https://viajealser.com"
+      : "https://viajealser.com";
 
   const order = {
     intent: "CAPTURE",
@@ -54,7 +56,7 @@ export const createOrder = async (
       {
         amount: {
           currency_code: "USD",
-          value: "5.00",
+          value: "36.00", // Cambiar a 36 para coincidir con tu frontend
         },
       },
     ],
@@ -63,8 +65,7 @@ export const createOrder = async (
       landing_page: "NO_PREFERENCE",
       user_action: "PAY_NOW",
       return_url: `${baseUrl}/api/v1/capture-order?state=${userId}`, // Ruta del backend para capturar la orden
-      // Mantener compatibilidad con ambos proyectos: alias de cancelación sin /api también disponible
-      cancel_url: `${baseUrl}/api/v1/cancel-order`,
+      cancel_url: `${baseUrl}/cancel-payment`, // Cambiar aquí - sin /api/v1/
     },
   };
 
@@ -168,13 +169,13 @@ export const captureOrder = async (
     };
     await user.save();
 
-    // Redireccionar usando HOST como el proyecto que funciona
-    const frontendUrl =
+    // ✅ CAMBIO PRINCIPAL: Usar baseUrl como el proyecto que funciona
+    const baseUrl =
       process.env.NODE_ENV === "production"
         ? "https://viajealser.com"
-        : "http://localhost:5173";
+        : "https://viajealser.com";
 
-    res.redirect(`${frontendUrl}/pagoAprobado`);
+    res.redirect(`${baseUrl}/pagoAprobado`);
   } catch (error) {
     console.error("Error capturing order:", error);
     res.status(500).json({ message: "Error processing payment", error });
@@ -182,7 +183,13 @@ export const captureOrder = async (
 };
 
 export const cancelPayment = (req: Request, res: Response) => {
-  res.redirect("/");
+  // ✅ También corregir la redirección de cancelación
+  const baseUrl =
+    process.env.NODE_ENV === "production"
+      ? "https://viajealser.com"
+      : "https://viajealser.com";
+
+  res.redirect(`${baseUrl}/`);
 };
 //#endregion
 
