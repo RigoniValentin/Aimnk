@@ -48,7 +48,7 @@ export const createOrder = async (
   const baseUrl =
     process.env.NODE_ENV === "production"
       ? "https://viajealser.com"
-      : "https://viajealser.com";
+      : "https://localhot:5173";
 
   const order = {
     intent: "CAPTURE",
@@ -187,7 +187,7 @@ export const cancelPayment = (req: Request, res: Response) => {
   const baseUrl =
     process.env.NODE_ENV === "production"
       ? "https://viajealser.com"
-      : "https://viajealser.com";
+      : "https://localhost:3010";
 
   res.redirect(`${baseUrl}/`);
 };
