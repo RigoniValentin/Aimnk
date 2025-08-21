@@ -183,13 +183,13 @@ export const captureOrder = async (
 };
 
 export const cancelPayment = (req: Request, res: Response) => {
-  // ✅ También corregir la redirección de cancelación
-  const baseUrl =
+  // Redirigir directamente a la página de suscripciones
+  const frontendUrl =
     process.env.NODE_ENV === "production"
       ? "https://viajealser.com"
-      : "https://localhost:3010";
+      : "http://localhost:5173";
 
-  res.redirect(`${baseUrl}/`);
+  res.redirect(`${frontendUrl}/suscripciones`);
 };
 //#endregion
 
