@@ -65,7 +65,7 @@ export const createOrder = async (
       landing_page: "NO_PREFERENCE",
       user_action: "PAY_NOW",
       return_url: `${baseUrl}/api/v1/capture-order?state=${userId}`, // Ruta del backend para capturar la orden
-      cancel_url: `${baseUrl}/cancel-payment`, // Cambiar aquí - sin /api/v1/
+      cancel_url: `${baseUrl}/suscripciones`, // Redirigir directamente al frontend
     },
   };
 
