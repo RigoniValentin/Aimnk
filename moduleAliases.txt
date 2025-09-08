@@ -7,6 +7,7 @@
     "@controllers": "src/controllers",
     "@models": "src/models",
     "@middlewares": "src/middlewares",
+    "@socket": "src/socket",
     "types": "src/types",
     "app": "src/app.ts"
   },
@@ -20,6 +21,7 @@
     "@controllers": "dist/src/controllers",
     "@models": "dist/src/models",
     "@middlewares": "dist/src/middlewares",
-    "types": "dist/src/types", 
+    "@socket": "dist/src/socket",
+    "types": "dist/src/types",
     "app": "dist/src/app.js"
   },
