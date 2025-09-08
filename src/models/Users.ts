@@ -12,6 +12,8 @@ const UserSchema: Schema = new Schema<User>(
       type: String,
       required: true,
       unique: true,
+      minlength: 3,
+      maxlength: 30,
     },
     email: {
       type: String,
@@ -23,6 +25,14 @@ const UserSchema: Schema = new Schema<User>(
       required: true,
       trim: true,
     },
+    avatar: { type: String },
+    bio: { type: String, maxlength: 500 },
+    followersCount: { type: Number, default: 0 },
+    followingCount: { type: Number, default: 0 },
+    postsCount: { type: Number, default: 0 },
+    isVerified: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: true },
+    lastActive: { type: Date },
     permissions: {
       type: [String],
       default: [],

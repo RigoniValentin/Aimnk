@@ -40,6 +40,8 @@ import { sendResetPasswordEmail } from "@services/emailService";
 
 import { get } from "mongoose";
 import stationsRoutes from "./stationsRoutes";
+import socialRoutes from "./socialRoutes";
+import testRoutes from "./testRoutes";
 import {
   listAllQna,
   listMineQna,
@@ -132,6 +134,14 @@ export default () => {
   // #region Stations Routes
   // Monta todas las rutas de estaciones bajo /api/v1/stations
   router.use("/stations", stationsRoutes);
+  // #endregion
+
+  // #region Social (Comunidad) Routes
+  router.use("/SER", socialRoutes);
+  // #endregion
+
+  // #region Test Routes
+  router.use("/test", testRoutes);
   // #endregion
 
   // #region QnA Routes

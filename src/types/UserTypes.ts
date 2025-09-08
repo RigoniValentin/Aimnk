@@ -7,6 +7,14 @@ export interface User extends Document {
   username: string;
   email: string;
   password: string;
+  avatar?: string;
+  bio?: string;
+  followersCount?: number;
+  followingCount?: number;
+  postsCount?: number;
+  isVerified?: boolean;
+  isActive?: boolean;
+  lastActive?: Date;
   nationality: string;
   locality: string;
   age: number;
