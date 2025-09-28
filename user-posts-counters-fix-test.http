@@ -1,0 +1,145 @@
+### 🐛 TEST: Verificar Contadores de Interacciones en Posts de Usuario
+# Validar que /posts/user/{userId} incluye todos los campos como /posts/feed
+
+### Test 1: Validar estructura completa de respuesta ✅
+GET http://localhost:3013/api/v1/SER/posts/user/689a64f21b42abd1f487ddc4?page=1&limit=5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+### CAMPOS CRÍTICOS QUE DEBEN ESTAR PRESENTES ✅:
+
+#### 🔍 Campos Originales (Compatibilidad FE):
+# - _id: ObjectId (NO undefined)
+# - content: string
+# - images: array
+# - imageCropData: array  
+# - authorId: object (populado, NO ObjectId string)
+# - likesCount: number ≥ 0
+# - commentsCount: number ≥ 0
+# - sharesCount: number ≥ 0
+# - hashtags: array
+# - mentions: array
+# - isActive: boolean
+# - createdAt: Date
+# - updatedAt: Date
+
+#### 🔍 Campos Transformados (Formato Nuevo FE):
+# - id: string (mapeado desde _id)
+# - author: object con { id, username, name, avatar, etc. }
+# - likes: number (mapeado desde likesCount)
+# - comments: number (mapeado desde commentsCount)  
+# - shares: number (mapeado desde sharesCount)
+
+#### 🔍 Estados de Interacción:
+# - isLiked: boolean (NO undefined)
+# - isBookmarked: boolean (NO undefined)
+
+### ESTRUCTURA ESPERADA ✅:
+# {
+#   "success": true,
+#   "data": [
+#     {
+#       "_id": "ObjectId válido",           ← CRÍTICO: NO debe ser undefined
+#       "content": "texto del post",
+#       "images": [...],
+#       "imageCropData": [...],
+#       "authorId": {                       ← CRÍTICO: Objeto completo, NO string
+#         "_id": "...",
+#         "username": "...",
+#         "name": "...",
+#         etc.
+#       },
+#       "likesCount": 10,                   ← CRÍTICO: Número, NO undefined
+#       "commentsCount": 5,                 ← CRÍTICO: Número, NO undefined  
+#       "sharesCount": 2,                   ← CRÍTICO: Número, NO undefined
+#       "hashtags": [...],
+#       "mentions": [...],
+#       "isActive": true,
+#       "createdAt": "2025-...",
+#       "updatedAt": "2025-...",
+#       
+#       "id": "string version de _id",      ← Formato nuevo FE
+#       "author": { "id": "...", ... },    ← Formato nuevo FE
+#       "likes": 10,                        ← Formato nuevo FE
+#       "comments": 5,                      ← Formato nuevo FE
+#       "shares": 2,                        ← Formato nuevo FE
+#       "isLiked": true,                    ← CRÍTICO: Boolean, NO undefined
+#       "isBookmarked": false               ← CRÍTICO: Boolean, NO undefined
+#     }
+#   ],
+#   "pagination": { ... }
+# }
+
+###
+
+### Test 2: Comparar con /posts/feed para consistencia ✅
+GET http://localhost:3013/api/v1/SER/posts/feed?page=1&limit=3
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+### VALIDAR ✅: 
+# - Ambos endpoints deben tener estructura similar
+# - Mismos campos de contadores e interacciones
+# - Misma lógica de isLiked/isBookmarked
+
+###
+
+### Test 3: Sin autenticación (público) ✅
+GET http://localhost:3013/api/v1/SER/posts/user/689a64f21b42abd1f487ddc4?page=1&limit=3
+
+### VALIDAR ✅:
+# - isLiked: false (NO undefined)
+# - isBookmarked: false (NO undefined)
+# - Contadores siguen presentes: likesCount, commentsCount, sharesCount
+
+###
+
+### Test 4: Usuario con posts que tienen interacciones ✅
+GET http://localhost:3013/api/v1/SER/posts/user/689a649b1b42abd1f487ddc1?page=1&limit=3
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+### VALIDAR ✅:
+# - likesCount > 0 si hay likes
+# - isLiked correctamente basado en usuario actual
+# - isBookmarked correctamente basado en usuario actual
+
+###
+
+# 🚨 ERRORES QUE DEBEN ESTAR CORREGIDOS:
+
+## ❌ ANTES (Problemático):
+# {
+#   _id: undefined,           ← ERROR CRÍTICO
+#   content: "...",
+#   likesCount: undefined,    ← ERROR CRÍTICO  
+#   commentsCount: undefined, ← ERROR CRÍTICO
+#   sharesCount: undefined,   ← ERROR CRÍTICO
+#   isLiked: undefined,       ← ERROR CRÍTICO
+#   isBookmarked: undefined   ← ERROR CRÍTICO
+# }
+
+## ✅ DESPUÉS (Corregido):
+# {
+#   _id: "ObjectId válido",
+#   content: "...",
+#   authorId: { objeto completo },
+#   likesCount: 10,
+#   commentsCount: 5, 
+#   sharesCount: 2,
+#   isLiked: true,
+#   isBookmarked: false,
+#   
+#   // PLUS: Campos transformados para nuevo formato FE
+#   id: "string",
+#   author: { formato nuevo },
+#   likes: 10,
+#   comments: 5,
+#   shares: 2
+# }
+
+# 🎯 OBJETIVO:
+# El endpoint /posts/user/{userId} debe tener EXACTAMENTE
+# la misma estructura de datos que /posts/feed, solo
+# filtrado por authorId específico.
+
+# 🔍 LOGS ESPERADOS EN CONSOLA:
+# 👤 Obteniendo posts del usuario ... - Página 1, Límite 5
+# ✅ Posts transformados: X/Y total

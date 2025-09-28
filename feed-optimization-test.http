@@ -1,0 +1,129 @@
+###
+### Pruebas de Optimización de Feed con Populate de Autores
+### Base URL: http://localhost:3013/api/v1/SER
+###
+
+### Variables
+@baseUrl = http://localhost:3013/api/v1/SER
+@token = YOUR_JWT_TOKEN_HERE
+
+###
+### 1. Obtener Feed Optimizado (con información de autores)
+### GET /posts/feed
+###
+GET {{baseUrl}}/posts/feed?page=1&limit=5
+Authorization: Bearer {{token}}
+
+###
+### 2. Explorar Posts (con información de autores)
+### GET /posts/explore  
+###
+GET {{baseUrl}}/posts/explore?page=1&limit=5
+Authorization: Bearer {{token}}
+
+###
+### 3. Posts por Hashtag (con información de autores)
+### GET /posts/hashtag/:tag
+###
+GET {{baseUrl}}/posts/hashtag/programacion?page=1&limit=5
+Authorization: Bearer {{token}}
+
+###
+### 4. Posts de un Usuario Específico (con información de autores)
+### GET /users/:id/posts
+###
+GET {{baseUrl}}/users/689a649b1b42abd1f487ddc1/posts?page=1&limit=5
+Authorization: Bearer {{token}}
+
+###
+### 5. Post Individual (con información del autor)
+### GET /posts/:id
+###
+GET {{baseUrl}}/posts/68d72b314511733cb0241068
+Authorization: Bearer {{token}}
+
+###
+### FORMATO DE RESPUESTA ESPERADO DESPUÉS DE LA OPTIMIZACIÓN:
+###
+
+### Feed Optimizado:
+# {
+#   "success": true,
+#   "data": [
+#     {
+#       "_id": "68d72b314511733cb0241068",
+#       "content": "¡Nuevo post de prueba!",
+#       "authorId": {
+#         "_id": "689a649b1b42abd1f487ddc1",
+#         "username": "valedev",
+#         "name": "Valentín Rigoni", 
+#         "email": "admintest@gmail.com",
+#         "avatar": "http://localhost:3013/uploads/avatars/avatar-123.jpeg",
+#         "bio": "Guitarrista y desarrollador de software",
+#         "isVerified": false,
+#         "followersCount": 0,
+#         "followingCount": 0,
+#         "createdAt": "2025-08-11T21:46:03.948Z"
+#       },
+#       "likesCount": 0,
+#       "commentsCount": 0,
+#       "sharesCount": 0,
+#       "hashtags": ["programacion"],
+#       "mentions": [],
+#       "isActive": true,
+#       "images": [],
+#       "createdAt": "2025-09-27T00:00:00.000Z",
+#       "updatedAt": "2025-09-27T00:00:00.000Z"
+#     }
+#   ],
+#   "pagination": {
+#     "page": 1,
+#     "limit": 5,
+#     "total": 25,
+#     "totalPages": 5,
+#     "hasNextPage": true,
+#     "hasPrevPage": false
+#   }
+# }
+
+###
+### COMPARACIÓN DE PERFORMANCE:
+###
+
+### ❌ ANTES (N+1 Problem):
+# 1 query para obtener posts
+# + N queries adicionales para obtener cada autor
+# = 1 + N queries total
+
+### ✅ DESPUÉS (Optimizado):  
+# 1 query con populate para obtener posts + autores
+# = 1 query total
+
+### BENEFICIOS ESPERADOS:
+# ⚡ 5-10x más rápido
+# 📊 Escalable con miles de posts  
+# 🌐 Menos tráfico de red
+# 💾 Menor uso de memoria
+# 🔄 Datos siempre consistentes
+
+###
+### VALIDACIONES A REALIZAR:
+###
+
+### 1. Verificar estructura de authorId:
+# - Debe ser un objeto, no un string
+# - Debe contener username, name, avatar, etc.
+
+### 2. Verificar logs del servidor:
+# - "📡 Obteniendo feed con autores populados"
+# - "✅ Feed obtenido: X posts con autores"
+
+### 3. Medir performance:
+# - Comparar tiempo de respuesta antes/después
+# - Monitorear número de queries en MongoDB
+
+### 4. Probar casos edge:
+# - Posts de usuarios eliminados (no deben aparecer)
+# - Posts sin autor válido (deben filtrarse)
+
+###

@@ -1,0 +1,93 @@
+### Sistema de Sugerencias Inteligente - Tests Backend
+
+# Variables
+@baseUrl = http://localhost:3013/api/v1/SER
+@authToken = TU_TOKEN_AQUI
+@userId = 676e737b123456789abcdef1
+
+### 1. Obtener sugerencias básicas - optimizado para comunidades pequeñas (default: 4 usuarios)
+GET {{baseUrl}}/users/suggestions
+Authorization: Bearer {{authToken}}
+
+### 2. Obtener sugerencias con límite específico para comunidades pequeñas
+GET {{baseUrl}}/users/suggestions?limit=3
+Authorization: Bearer {{authToken}}
+
+### 3. Obtener sugerencias con refresh forzado (comunidad pequeña)
+GET {{baseUrl}}/users/suggestions?refresh=true&exclude_recent=3
+Authorization: Bearer {{authToken}}
+
+### 4. Obtener sugerencias con todos los parámetros optimizados para comunidades pequeñas
+GET {{baseUrl}}/users/suggestions?limit=4&refresh=true&exclude_recent=3&allowIncompleteProfiles=true&includeNewUsers=true
+Authorization: Bearer {{authToken}}
+
+### 5. Test específico para comunidades pequeñas - incluir perfiles incompletos
+GET {{baseUrl}}/users/suggestions?limit=6&allowIncompleteProfiles=true
+Authorization: Bearer {{authToken}}
+
+### 6. Test específico para comunidades pequeñas - incluir usuarios nuevos
+GET {{baseUrl}}/users/suggestions?limit=6&includeNewUsers=true&exclude_recent=1
+Authorization: Bearer {{authToken}}
+
+### 5. Test con límite mínimo (1 usuario)
+GET {{baseUrl}}/users/suggestions?limit=1
+Authorization: Bearer {{authToken}}
+
+### 6. Test con límite máximo (20 usuarios)
+GET {{baseUrl}}/users/suggestions?limit=20
+Authorization: Bearer {{authToken}}
+
+### 7. Test con parámetro inválido - límite muy alto (debería fallar)
+GET {{baseUrl}}/users/suggestions?limit=50
+Authorization: Bearer {{authToken}}
+
+### 8. Test con parámetro inválido - límite muy bajo (debería fallar)
+GET {{baseUrl}}/users/suggestions?limit=0
+Authorization: Bearer {{authToken}}
+
+### 9. Test sin autenticación (debería fallar)
+GET {{baseUrl}}/users/suggestions
+
+### 10. Test con token inválido (debería fallar)
+GET {{baseUrl}}/users/suggestions
+Authorization: Bearer token_invalido
+
+### Respuesta Esperada:
+### {
+###   "success": true,
+###   "data": {
+###     "suggestions": [
+###       {
+###         "id": "676e737b123456789abcdef1",
+###         "username": "alexandra_dev",
+###         "displayName": "Alexandra González",
+###         "avatar": "https://cdn.aimnk.com/avatars/alexandra.jpg",
+###         "bio": "Desarrolladora Frontend | Amante del diseño UX/UI",
+###         "isVerified": true,
+###         "followersCount": 2340,
+###         "mutualFollowers": 12,
+###         "mutualFollowersNames": ["carlos_designer", "maria_tech", "juan_dev"],
+###         "reason": "mutual_friends",
+###         "score": 95,
+###         "commonInterests": ["Tecnología", "Diseño", "Programación"],
+###         "recentActivity": "Publicó sobre React hooks hace 2 días"
+###       }
+###     ],
+###     "refreshToken": "refresh_1641989400000_abc123xyz",
+###     "algorithmVersion": "v2.1",
+###     "generatedAt": "2024-01-15T10:30:00Z"
+###   },
+###   "meta": {
+###     "total": 10,
+###     "returned": 10,
+###     "executionTime": "245ms"
+###   }
+### }
+
+### Tipos de Razones Esperadas:
+### - "mutual_friends": Amigos en común
+### - "similar_interests": Intereses similares  
+### - "popular": Usuarios populares
+### - "new_user": Usuarios nuevos
+### - "location_based": Basado en ubicación
+### - "algorithm": Sugerencia del algoritmo

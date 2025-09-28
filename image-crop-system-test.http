@@ -1,0 +1,205 @@
+### 🧪 TEST: Sistema de Crop de Imágenes en Posts
+# Validar que imageCropData se procese y devuelva correctamente
+
+### Test 1: Crear post con imageCropData ✅
+POST http://localhost:3013/api/v1/SER/posts
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="content"
+
+¡Mi nueva foto con crop personalizado! #crop #fotografía
+------WebKitFormBoundary
+Content-Disposition: form-data; name="imageCropData"
+
+[{"x": 25, "y": 15, "scale": 120}, {"x": 75, "y": 85, "scale": 90}]
+------WebKitFormBoundary
+Content-Disposition: form-data; name="images"; filename="test1.jpg"
+Content-Type: image/jpeg
+
+(file content here)
+------WebKitFormBoundary
+Content-Disposition: form-data; name="images"; filename="test2.jpg"
+Content-Type: image/jpeg
+
+(file content here)
+------WebKitFormBoundary--
+
+### ESPERADO ✅: Status 201 con imageCropData incluido
+# {
+#   "success": true,
+#   "data": {
+#     "_id": "68d82f11e5d4bb66b62620cc",
+#     "content": "¡Mi nueva foto con crop personalizado! #crop #fotografía",
+#     "images": ["/uploads/social/image1.jpg", "/uploads/social/image2.jpg"],
+#     "imageCropData": [
+#       {"x": 25, "y": 15, "scale": 120},
+#       {"x": 75, "y": 85, "scale": 90}
+#     ],
+#     "authorId": "689a649b1b42abd1f487ddc1",
+#     "likesCount": 0,
+#     "commentsCount": 0,
+#     "hashtags": ["crop", "fotografía"],
+#     "createdAt": "2025-09-27T18:38:09.295Z"
+#   }
+# }
+
+###
+
+### Test 2: Crear post SIN imageCropData (valores por defecto) ✅
+POST http://localhost:3013/api/v1/SER/posts
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="content"
+
+Post normal sin datos de crop
+------WebKitFormBoundary--
+
+### ESPERADO ✅: imageCropData debe ser array vacío []
+
+###
+
+### Test 3: Feed incluye imageCropData ✅
+GET http://localhost:3013/api/v1/SER/posts/feed?page=1&limit=5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+### ESPERADO ✅: Todos los posts deben incluir campo imageCropData
+# {
+#   "success": true,
+#   "data": [
+#     {
+#       "_id": "...",
+#       "content": "...",
+#       "images": [...],
+#       "imageCropData": [...], ← DEBE ESTAR PRESENTE
+#       "authorId": {...}
+#     }
+#   ]
+# }
+
+###
+
+### Test 4: Explore incluye imageCropData ✅
+GET http://localhost:3013/api/v1/SER/posts/explore?page=1&limit=5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+###
+
+### Test 5: Post individual incluye imageCropData ✅
+GET http://localhost:3013/api/v1/SER/posts/676794e58b913122f91ebf8d
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE7MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+###
+
+### Test 6: Hashtag incluye imageCropData ✅
+GET http://localhost:3013/api/v1/SER/posts/hashtag/crop?page=1&limit=5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+###
+
+### Test 7: Validación de límites de crop ✅
+POST http://localhost:3013/api/v1/SER/posts
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="content"
+
+Test de validación de límites
+------WebKitFormBoundary
+Content-Disposition: form-data; name="imageCropData"
+
+[{"x": -10, "y": 150, "scale": 300}]
+------WebKitFormBoundary--
+
+### ESPERADO ✅: Valores corregidos dentro de límites
+# imageCropData: [{"x": 0, "y": 100, "scale": 200}]
+# - x: -10 → 0 (mínimo)
+# - y: 150 → 100 (máximo) 
+# - scale: 300 → 200 (máximo)
+
+###
+
+### Test 8: JSON malformado en imageCropData ❌
+POST http://localhost:3013/api/v1/SER/posts
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary
+
+------WebKitFormBoundary
+Content-Disposition: form-data; name="content"
+
+Test JSON malformado
+------WebKitFormBoundary
+Content-Disposition: form-data; name="imageCropData"
+
+[{"x": 50, "y": 50, "scale": 100} // JSON malformado
+------WebKitFormBoundary--
+
+### ESPERADO ✅: Post creado con imageCropData vacío []
+# El sistema debe manejar JSON malformado sin fallar
+
+###
+
+# 🎯 FUNCIONALIDADES A VALIDAR:
+
+## ✅ Modelo de Post Actualizado:
+# - Campo imageCropData agregado como array
+# - Valores por defecto: x:50, y:50, scale:100
+# - Estructura: [{x: Number, y: Number, scale: Number}]
+
+## ✅ Procesamiento en createPost:
+# - Parse de JSON desde req.body.imageCropData
+# - Validación de límites: x/y (0-100), scale (50-200)
+# - Manejo de errores JSON malformado
+# - Logging de datos recibidos
+
+## ✅ Respuestas Incluyen imageCropData:
+# - Feed principal (/posts/feed)
+# - Explore (/posts/explore) 
+# - Post individual (/posts/:id)
+# - Búsqueda por hashtag (/posts/hashtag/:tag)
+# - Posts de usuario (/users/:id/posts)
+
+## ✅ Validaciones Implementadas:
+# - x: Math.max(0, Math.min(100, x || 50))
+# - y: Math.max(0, Math.min(100, y || 50))
+# - scale: Math.max(50, Math.min(200, scale || 100))
+
+## ✅ WebSocket Events:
+# - new-post incluye imageCropData
+# - Broadcast a comunidad con crop data
+
+## ✅ Logging para Debug:
+# ✂️ Datos de crop recibidos: [...]
+# 📸 Creando post con imageCropData: {...}
+# ❌ Error parsing imageCropData: {...}
+
+# 🎯 ESTRUCTURA COMPLETA DE RESPUESTA:
+# {
+#   "success": true,
+#   "data": {
+#     "_id": "68d82f11e5d4bb66b62620cc",
+#     "content": "¡Mi nueva foto!",
+#     "images": ["/uploads/social/image1.jpg"],
+#     "imageCropData": [                    ← NUEVO CAMPO
+#       {
+#         "x": 25,      // Posición X (0-100%)
+#         "y": 15,      // Posición Y (0-100%)
+#         "scale": 120  // Escala (50-200%)
+#       }
+#     ],
+#     "authorId": { ... },
+#     "createdAt": "2025-09-27T18:38:09.295Z",
+#     "likesCount": 0,
+#     "commentsCount": 0
+#   }
+# }
+
+# 🚀 CASOS DE USO:
+# 1. Usuario sube foto y ajusta posición/zoom → imageCropData se guarda
+# 2. Feed muestra fotos con posición exacta → Frontend lee imageCropData
+# 3. Posts sin ajustes → imageCropData = [] (array vacío)
+# 4. Múltiples imágenes → imageCropData[i] corresponde a images[i]

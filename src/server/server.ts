@@ -104,6 +104,9 @@ io.on("connection", (socket) => {
   socket.join(`user-${user.id}`);
 
   console.log(`[socket] connection user=${user.id} socket=${socket.id}`);
+  console.log(
+    `🔔 Usuario ${user.id} conectado para notificaciones en tiempo real`
+  );
   io.to("community").emit("user-online", { userId: user.id });
 
   // room management
@@ -115,13 +118,23 @@ io.on("connection", (socket) => {
     socket.leave("community");
     console.log(`[socket] ${user.username} left community`);
   });
-  socket.on("join-post", (postId: string) => {
-    socket.join(`post-${postId}`);
-    console.log(`[socket] ${user.username} joined post-${postId}`);
+  socket.on("join-post", (data: any) => {
+    // El frontend puede enviar el postId como string o como objeto { postId: '...' }
+    const postIdString =
+      typeof data === "string" ? data : data?.postId || String(data);
+    socket.join(`post-${postIdString}`);
+    console.log(`[socket] ${user.username} joined post-${postIdString}`, {
+      receivedData: data,
+      extractedPostId: postIdString,
+      dataType: typeof data,
+    });
   });
-  socket.on("leave-post", (postId: string) => {
-    socket.leave(`post-${postId}`);
-    console.log(`[socket] ${user.username} left post-${postId}`);
+  socket.on("leave-post", (data: any) => {
+    // El frontend puede enviar el postId como string o como objeto { postId: '...' }
+    const postIdString =
+      typeof data === "string" ? data : data?.postId || String(data);
+    socket.leave(`post-${postIdString}`);
+    console.log(`[socket] ${user.username} left post-${postIdString}`);
   });
 
   // typing indicators

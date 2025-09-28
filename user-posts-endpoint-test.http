@@ -1,0 +1,152 @@
+### 🧪 TEST: Endpoint de Posts de Usuario
+# GET /api/v1/SER/posts/user/:userId
+# Formato exacto esperado por el Frontend
+
+### Test 1: Posts de usuario específico con paginación ✅
+GET http://localhost:3013/api/v1/SER/posts/user/689a649b1b42abd1f487ddc1?page=1&limit=12
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+### ESPERADO ✅: Estructura exacta del FE
+# {
+#   "success": true,
+#   "data": [
+#     {
+#       "id": "66f1c7...f12",
+#       "content": "Mi nueva publicación ✨",
+#       "images": ["/uploads/social/abc.jpg", "/uploads/social/def.jpg"],
+#       "imageCropData": [
+#         { "x": 40, "y": 50, "scale": 120 }, 
+#         { "x": 50, "y": 50, "scale": 100 }
+#       ],
+#       "author": {
+#         "id": "689a649b1b42abd1f487ddc1",
+#         "username": "valedev",
+#         "name": "Valentín Rigoni",
+#         "avatar": "/uploads/avatars/valen.jpg",
+#         "email": "valen@example.com",
+#         "bio": "Guitarrista",
+#         "followersCount": 120,
+#         "followingCount": 80,
+#         "postsCount": 23,
+#         "createdAt": "2025-08-01T12:34:56.000Z",
+#         "updatedAt": "2025-09-01T12:34:56.000Z"
+#       },
+#       "likes": 10,
+#       "comments": 2,
+#       "shares": 1,
+#       "isLiked": false,
+#       "isBookmarked": false,
+#       "createdAt": "2025-09-27T11:00:00.000Z",
+#       "updatedAt": "2025-09-27T11:00:00.000Z"
+#     }
+#   ],
+#   "pagination": {
+#     "page": 1,
+#     "limit": 12,
+#     "total": 23,
+#     "totalPages": 2,
+#     "hasNextPage": true,
+#     "hasPrevPage": false
+#   }
+# }
+
+###
+
+### Test 2: Sin autenticación (público) ✅
+GET http://localhost:3013/api/v1/SER/posts/user/689a649b1b42abd1f487ddc1?page=1&limit=12
+
+### ESPERADO ✅: isLiked e isBookmarked siempre false
+
+###
+
+### Test 3: Paginación - página 2 ✅
+GET http://localhost:3013/api/v1/SER/posts/user/689a649b1b42abd1f487ddc1?page=2&limit=12
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+###
+
+### Test 4: Límite personalizado ✅
+GET http://localhost:3013/api/v1/SER/posts/user/689a649b1b42abd1f487ddc1?page=1&limit=6
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+### ESPERADO ✅: limit: 6 en respuesta
+
+###
+
+### Test 5: Límite máximo (50) ✅
+GET http://localhost:3013/api/v1/SER/posts/user/689a649b1b42abd1f487ddc1?page=1&limit=100
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+### ESPERADO ✅: limit: 50 (limitado automáticamente)
+
+###
+
+### Test 6: Usuario inexistente ❌
+GET http://localhost:3013/api/v1/SER/posts/user/000000000000000000000000?page=1&limit=12
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+### ESPERADO ✅: data: [] (array vacío), total: 0
+
+###
+
+### Test 7: ID inválido ❌
+GET http://localhost:3013/api/v1/SER/posts/user/invalid-id?page=1&limit=12
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+### ESPERADO ❌: Status 400, INVALID_USER_ID
+
+###
+
+### Test 8: Usuario con posts con imágenes y crop ✅
+GET http://localhost:3013/api/v1/SER/posts/user/689a64f21b42abd1f487ddc4?page=1&limit=12
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+### VALIDAR ✅: imageCropData presente y coordinado con images
+
+###
+
+# 🎯 VALIDACIONES CRÍTICAS DEL FRONTEND:
+
+## ✅ Estructura de Datos Exacta:
+# - id: string (NO _id)
+# - author.id: string (NO _id) 
+# - likes/comments/shares: números (NO likesCount)
+# - isLiked/isBookmarked: booleans
+# - createdAt/updatedAt: strings ISO
+
+## ✅ Paginación Correcta:
+# - Default limit: 12 (NO 20)
+# - Max limit: 50
+# - Campos: page, limit, total, totalPages, hasNextPage, hasPrevPage
+
+## ✅ imageCropData:
+# - Array de objetos {x, y, scale}
+# - Mismo orden que images
+# - Puede ser array vacío []
+
+## ✅ Autor Populado:
+# - Objeto completo con todos los campos
+# - NO solo ObjectId string
+
+## ✅ isLiked/isBookmarked:
+# - true si usuario autenticado tiene like/bookmark
+# - false si no hay autenticación o no tiene
+
+## ✅ Acceso Público:
+# - NO requiere autenticación obligatoria
+# - Funciona sin Bearer token
+
+## ✅ Ordenamiento:
+# - createdAt descendente (más nuevos primero)
+# - Solo posts activos (isActive: true)
+
+# 🚀 CASOS DE USO:
+# 1. Perfil público: Cualquiera puede ver posts de cualquier usuario
+# 2. Grilla de fotos: FE usa formato específico para mostrar en grid
+# 3. Infinite scroll: Paginación con hasNextPage para cargar más
+# 4. Interacciones: isLiked/isBookmarked para mostrar estado correcto
+# 5. Crop de imágenes: imageCropData para posicionamiento exacto
+
+# 📊 LOGS ESPERADOS EN CONSOLA:
+# 👤 Obteniendo posts del usuario 689a649b1b42abd1f487ddc1 - Página 1, Límite 12
+# ✅ Posts transformados: 5/23 total

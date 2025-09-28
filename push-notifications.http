@@ -1,0 +1,224 @@
+### AIMNK Push Notifications API Testing
+### Base URL: http://localhost:3013/api/v1/push
+
+# Variables
+@baseUrl = http://localhost:3013/api/v1
+@authToken = {{$dotenv AUTH_TOKEN}}
+
+### ============================================
+### 🔓 ENDPOINTS PÚBLICOS
+### ============================================
+
+### 1. Obtener clave pública VAPID
+GET {{baseUrl}}/push/vapid-key
+Content-Type: application/json
+
+### ============================================
+### 🔒 ENDPOINTS AUTENTICADOS  
+### ============================================
+
+### 2. Registrar suscripción push
+POST {{baseUrl}}/push/subscribe
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "subscription": {
+    "endpoint": "https://fcm.googleapis.com/fcm/send/example-endpoint-123456789",
+    "keys": {
+      "p256dh": "BG4F4mbUqhxzMJHhKJn9E4zR1t8zH9HhbE8wB7UhuYVNvLC9m6LGb8BKjqUMGwX4E8Th9c5TLJwC9Q7v2HB8F9Q",
+      "auth": "example-auth-key-12345678901234567890"
+    }
+  }
+}
+
+### 3. Obtener suscripciones del usuario
+GET {{baseUrl}}/push/subscriptions
+Authorization: Bearer {{authToken}}
+
+### 4. Enviar notificación de prueba
+POST {{baseUrl}}/push/test
+Authorization: Bearer {{authToken}}
+
+### 5. Enviar notificación personalizada
+POST {{baseUrl}}/push/send
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "title": "🧪 Test Personalizado",
+  "body": "Esta es una notificación de prueba personalizada desde la API",
+  "type": "test",
+  "actionUrl": "/comunidad"
+}
+
+### 6. Obtener estadísticas
+GET {{baseUrl}}/push/stats
+Authorization: Bearer {{authToken}}
+
+### 7. Limpiar suscripciones inactivas
+POST {{baseUrl}}/push/cleanup
+Authorization: Bearer {{authToken}}
+
+### 8. Desregistrar suscripción
+DELETE {{baseUrl}}/push/unsubscribe
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "endpoint": "https://fcm.googleapis.com/fcm/send/example-endpoint-123456789"
+}
+
+### ============================================
+### 🧪 TESTS COMPLETOS DE INTEGRACIÓN
+### ============================================
+
+### Test 1: Flujo completo de registro
+# 1. Obtener VAPID key
+GET {{baseUrl}}/push/vapid-key
+
+### 
+# 2. Registrar suscripción
+POST {{baseUrl}}/push/subscribe
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "subscription": {
+    "endpoint": "https://fcm.googleapis.com/fcm/send/test-integration-endpoint",
+    "keys": {
+      "p256dh": "BIntegrationTestP256dhKeyExample123456789012345678901234567890123456789012345",
+      "auth": "IntegrationTestAuthKey1234567890"
+    }
+  }
+}
+
+###
+# 3. Verificar suscripción
+GET {{baseUrl}}/push/subscriptions
+Authorization: Bearer {{authToken}}
+
+###
+# 4. Enviar prueba
+POST {{baseUrl}}/push/test
+Authorization: Bearer {{authToken}}
+
+###
+# 5. Ver estadísticas
+GET {{baseUrl}}/push/stats
+Authorization: Bearer {{authToken}}
+
+###
+# 6. Desregistrar
+DELETE {{baseUrl}}/push/unsubscribe
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "endpoint": "https://fcm.googleapis.com/fcm/send/test-integration-endpoint"
+}
+
+### ============================================
+### 🔄 TESTS DE NOTIFICACIONES AUTOMÁTICAS
+### ============================================
+
+### Crear un post para generar notificaciones automáticas
+POST {{baseUrl}}/SER/posts
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "content": "🔔 Post de prueba para testing de push notifications automáticas #test",
+  "hashtags": ["test", "push", "notifications"]
+}
+
+### Dar like a un post (esto debería generar push notification automática)
+POST {{baseUrl}}/SER/posts/POST_ID_HERE/like
+Authorization: Bearer {{authToken}}
+
+### Ver notificaciones generadas
+GET {{baseUrl}}/SER/notifications?page=1&limit=10
+Authorization: Bearer {{authToken}}
+
+### ============================================
+### 🐛 TESTS DE CASOS EDGE
+### ============================================
+
+### Error: Sin autenticación
+POST {{baseUrl}}/push/subscribe
+Content-Type: application/json
+
+{
+  "subscription": {
+    "endpoint": "test",
+    "keys": {"p256dh": "test", "auth": "test"}
+  }
+}
+
+### Error: Datos inválidos
+POST {{baseUrl}}/push/subscribe
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "subscription": {
+    "endpoint": "",
+    "keys": {}
+  }
+}
+
+### Error: Endpoint inexistente
+DELETE {{baseUrl}}/push/unsubscribe
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "endpoint": "https://endpoint-que-no-existe.com"
+}
+
+### ============================================
+### 📊 MONITOREO Y DEBUGGING
+### ============================================
+
+### Ver estado general del sistema
+GET {{baseUrl}}/push/stats
+Authorization: Bearer {{authToken}}
+
+### Limpiar datos de prueba
+POST {{baseUrl}}/push/cleanup
+Authorization: Bearer {{authToken}}
+
+### ============================================
+### 📝 NOTAS DE TESTING
+### ============================================
+
+# Para hacer testing real:
+# 1. Reemplazar {{authToken}} con un JWT válido
+# 2. Usar endpoints reales de FCM/Mozilla Push Service
+# 3. Configurar Service Worker en el frontend
+# 4. Registrar dispositivo real desde el navegador
+
+# Endpoints de testing de FCM:
+# - Chrome: https://fcm.googleapis.com/fcm/send/*
+# - Firefox: https://updates.push.services.mozilla.com/*
+
+# Para generar claves VAPID reales:
+# npx web-push generate-vapid-keys
+
+### ============================================
+### 🔧 DEBUGGING COMÚN
+### ============================================
+
+# Error: "VAPID key not configured"
+# Verificar variables de entorno en .env
+
+# Error: "No active subscriptions"  
+# Usuario no tiene dispositivos registrados
+
+# Error: "User is online"
+# Sistema detectó usuario activo, no envía push
+
+# Success: "Push notification sent"
+# Notificación enviada correctamente
+
+### ============================================

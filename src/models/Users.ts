@@ -61,6 +61,39 @@ const UserSchema: Schema = new Schema<User>(
     // Nuevos campos para recuperación de contraseña
     resetPasswordToken: { type: String },
     resetPasswordExpires: { type: Date },
+
+    // Nuevos campos para el sistema de perfiles completo
+    location: { type: String, default: "" },
+    website: { type: String, default: "" },
+    birthDate: { type: Date },
+    coverImage: { type: String, default: "" },
+
+    mood: {
+      current: { type: String, default: "" },
+      emoji: { type: String, default: "" },
+      color: { type: String, default: "" },
+      updatedAt: { type: Date, default: Date.now },
+    },
+
+    socialLinks: {
+      instagram: { type: String, default: "" },
+      twitter: { type: String, default: "" },
+      linkedin: { type: String, default: "" },
+      youtube: { type: String, default: "" },
+    },
+
+    interests: [{ type: String }],
+
+    privacy: {
+      profileVisibility: {
+        type: String,
+        enum: ["public", "friends", "private"],
+        default: "public",
+      },
+      showEmail: { type: Boolean, default: false },
+      showStats: { type: Boolean, default: true },
+      allowMessages: { type: Boolean, default: true },
+    },
   },
   { timestamps: true, versionKey: false }
 );

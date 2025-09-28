@@ -42,6 +42,7 @@ import { get } from "mongoose";
 import stationsRoutes from "./stationsRoutes";
 import socialRoutes from "./socialRoutes";
 import testRoutes from "./testRoutes";
+import pushNotificationRoutes from "./pushNotificationRoutes";
 import {
   listAllQna,
   listMineQna,
@@ -142,6 +143,10 @@ export default () => {
 
   // #region Test Routes
   router.use("/test", testRoutes);
+  // #endregion
+
+  // #region Push Notifications Routes
+  router.use("/push", pushNotificationRoutes);
   // #endregion
 
   // #region QnA Routes

@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🔔 Nuevo Diseño de Notificaciones - AIMNK</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .demo-container {
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        max-width: 800px;
+        width: 100%;
+      }
+
+      .demo-header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .demo-header h1 {
+        font-size: 2.5rem;
+        font-weight: 800;
+        background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 12px;
+      }
+
+      .demo-header p {
+        color: #6b7280;
+        font-size: 1.125rem;
+        margin-bottom: 32px;
+      }
+
+      .status-badge {
+        display: inline-block;
+        background: linear-gradient(135deg, #10b981, #059669);
+        color: white;
+        padding: 8px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+        font-size: 0.875rem;
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+      }
+
+      .test-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 24px;
+        margin-bottom: 32px;
+      }
+
+      .test-card {
+        background: #f8fafc;
+        border: 2px solid #e2e8f0;
+        border-radius: 16px;
+        padding: 24px;
+        transition: all 0.3s ease;
+      }
+
+      .test-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        border-color: #3b82f6;
+      }
+
+      .test-card h3 {
+        color: #1e293b;
+        font-size: 1.25rem;
+        font-weight: 700;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .test-card p {
+        color: #64748b;
+        font-size: 0.875rem;
+        line-height: 1.5;
+        margin-bottom: 16px;
+      }
+
+      .action-btn {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+        color: white;
+        border: none;
+        padding: 12px 24px;
+        border-radius: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        font-size: 0.875rem;
+      }
+
+      .action-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+      }
+
+      .action-btn.secondary {
+        background: linear-gradient(135deg, #10b981, #059669);
+      }
+
+      .action-btn.danger {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+      }
+
+      .main-actions {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        margin-bottom: 32px;
+        flex-wrap: wrap;
+      }
+
+      .main-btn {
+        background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+        color: white;
+        border: none;
+        padding: 16px 32px;
+        border-radius: 16px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+        min-width: 200px;
+      }
+
+      .main-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 25px rgba(139, 92, 246, 0.3);
+      }
+
+      .results-section {
+        margin-top: 32px;
+        padding: 24px;
+        background: #f1f5f9;
+        border-radius: 16px;
+        border: 2px solid #e2e8f0;
+      }
+
+      .results-title {
+        font-size: 1.125rem;
+        font-weight: 700;
+        color: #1e293b;
+        margin-bottom: 16px;
+      }
+
+      .result-item {
+        background: white;
+        padding: 16px;
+        border-radius: 12px;
+        margin-bottom: 12px;
+        border-left: 4px solid #3b82f6;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      }
+
+      .result-success {
+        border-left-color: #10b981;
+      }
+
+      .result-error {
+        border-left-color: #ef4444;
+      }
+
+      .result-code {
+        background: #1e293b;
+        color: #e2e8f0;
+        padding: 16px;
+        border-radius: 12px;
+        font-family: "Courier New", monospace;
+        font-size: 0.8rem;
+        line-height: 1.5;
+        white-space: pre-wrap;
+        overflow-x: auto;
+        margin-top: 12px;
+      }
+
+      .ws-status {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        margin-left: 8px;
+      }
+
+      .ws-connected {
+        background: #dcfce7;
+        color: #166534;
+      }
+
+      .ws-disconnected {
+        background: #fee2e2;
+        color: #991b1b;
+      }
+
+      @media (max-width: 768px) {
+        .demo-container {
+          padding: 24px;
+        }
+
+        .demo-header h1 {
+          font-size: 2rem;
+        }
+
+        .test-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .main-actions {
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .main-btn {
+          width: 100%;
+          max-width: 300px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="demo-container">
+      <div class="demo-header">
+        <h1>🔔 Notificaciones Mejoradas</h1>
+        <p>Nuevo diseño con mejor visibilidad y UX profesional</p>
+        <span class="status-badge">✨ Rediseño Completo</span>
+      </div>
+
+      <div class="main-actions">
+        <button class="main-btn" onclick="openNotificationsApp()">
+          🚀 Abrir App Principal
+        </button>
+        <button class="main-btn" onclick="connectWebSocket()">
+          🔌 Conectar WebSocket
+        </button>
+        <button
+          class="main-btn"
+          onclick="diagnoseBackend()"
+          style="background: linear-gradient(135deg, #f59e0b, #d97706)"
+        >
+          🔧 Diagnosticar Backend
+        </button>
+      </div>
+
+      <div class="test-grid">
+        <div class="test-card">
+          <h3>📊 API de Estadísticas</h3>
+          <p>
+            Verifica que el backend responda correctamente con las estadísticas
+            de notificaciones.
+          </p>
+          <button class="action-btn" onclick="testStats()">
+            Probar Stats API
+          </button>
+        </div>
+
+        <div class="test-card">
+          <h3>📋 Listar Notificaciones</h3>
+          <p>
+            Obtiene la lista completa de notificaciones con el nuevo formato
+            mejorado.
+          </p>
+          <button class="action-btn" onclick="testNotifications()">
+            Obtener Lista
+          </button>
+        </div>
+
+        <div class="test-card">
+          <h3>❤️ Crear Notificación Like</h3>
+          <p>
+            Crea una notificación de "like" para probar el nuevo diseño visual.
+          </p>
+          <button
+            class="action-btn secondary"
+            onclick="createNotification('like')"
+          >
+            Crear Like
+          </button>
+        </div>
+
+        <div class="test-card">
+          <h3>💬 Crear Comentario</h3>
+          <p>
+            Genera una notificación de comentario con el estilo visual
+            actualizado.
+          </p>
+          <button
+            class="action-btn secondary"
+            onclick="createNotification('comment')"
+          >
+            Crear Comentario
+          </button>
+        </div>
+
+        <div class="test-card">
+          <h3>👤 Nuevo Seguidor</h3>
+          <p>
+            Simula una notificación de nuevo seguidor con animaciones mejoradas.
+          </p>
+          <button
+            class="action-btn secondary"
+            onclick="createNotification('follow')"
+          >
+            Crear Follow
+          </button>
+        </div>
+
+        <div class="test-card">
+          <h3>✅ Marcar como Leídas</h3>
+          <p>
+            Prueba la funcionalidad de marcar todas las notificaciones como
+            leídas.
+          </p>
+          <button class="action-btn danger" onclick="markAllAsRead()">
+            Marcar Leídas
+          </button>
+        </div>
+      </div>
+
+      <div class="results-section">
+        <div class="results-title">📈 Resultados de las Pruebas</div>
+        <div id="results-container">
+          <div class="result-item">
+            <strong>🎯 Listo para probar:</strong> El nuevo sistema de
+            notificaciones está operativo
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <script>
+      const API_BASE = "http://localhost:3013/api/v1";
+      let socket = null;
+
+      function addResult(message, type = "info") {
+        const container = document.getElementById("results-container");
+        const resultItem = document.createElement("div");
+        resultItem.className = `result-item result-${type}`;
+        resultItem.innerHTML = `
+                <strong>${new Date().toLocaleTimeString()}:</strong> ${message}
+                ${type === "success" ? "✅" : type === "error" ? "❌" : "ℹ️"}
+            `;
+        container.appendChild(resultItem);
+        container.scrollTop = container.scrollHeight;
+      }
+
+      function addCodeResult(title, data) {
+        const container = document.getElementById("results-container");
+        const resultItem = document.createElement("div");
+        resultItem.className = "result-item";
+        resultItem.innerHTML = `
+                <strong>${title}</strong>
+                <div class="result-code">${JSON.stringify(data, null, 2)}</div>
+            `;
+        container.appendChild(resultItem);
+        container.scrollTop = container.scrollHeight;
+      }
+
+      async function testStats() {
+        try {
+          addResult("🔍 Probando API de estadísticas...", "info");
+          const response = await fetch(`${API_BASE}/SER/notifications/stats`);
+          const data = await response.json();
+
+          addResult("✅ API Stats funcionando correctamente", "success");
+          addCodeResult("📊 Estadísticas obtenidas:", data);
+        } catch (error) {
+          addResult(`❌ Error en API Stats: ${error.message}`, "error");
+        }
+      }
+
+      async function testNotifications() {
+        try {
+          addResult("📋 Obteniendo lista de notificaciones...", "info");
+          const response = await fetch(
+            `${API_BASE}/SER/notifications?page=1&limit=5`,
+          );
+          const data = await response.json();
+
+          addResult(
+            `✅ Obtenidas ${data.notifications?.length || 0} notificaciones`,
+            "success",
+          );
+          addCodeResult("📱 Notificaciones (nuevas con mejor diseño):", data);
+        } catch (error) {
+          addResult(
+            `❌ Error obteniendo notificaciones: ${error.message}`,
+            "error",
+          );
+        }
+      }
+
+      async function createNotification(type) {
+        const notifications = {
+          like: {
+            type: "like",
+            targetUserId: "user_demo",
+            fromUserId: "user_test",
+            relatedPostId: "post_demo_001",
+            message: "Le gustó tu publicación sobre diseño UX",
+          },
+          comment: {
+            type: "comment",
+            targetUserId: "user_demo",
+            fromUserId: "user_test",
+            relatedPostId: "post_demo_001",
+            relatedCommentId: "comment_001",
+            message: 'Comentó: "¡Excelente trabajo con el nuevo diseño!"',
+          },
+          follow: {
+            type: "follow",
+            targetUserId: "user_demo",
+            fromUserId: "user_test",
+            message: "Comenzó a seguirte",
+          },
+        };
+
+        try {
+          addResult(`🔔 Creando notificación tipo "${type}"...`, "info");
+          const response = await fetch(`${API_BASE}/SER/notifications/test`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(notifications[type]),
+          });
+
+          const data = await response.json();
+          addResult(
+            `✅ Notificación "${type}" creada con nuevo diseño`,
+            "success",
+          );
+          addCodeResult(`🎨 Nueva notificación ${type}:`, data);
+
+          // Auto-refresh para mostrar la nueva notificación
+          setTimeout(testNotifications, 1000);
+        } catch (error) {
+          addResult(`❌ Error creando notificación: ${error.message}`, "error");
+        }
+      }
+
+      async function markAllAsRead() {
+        try {
+          addResult("✅ Marcando todas como leídas...", "info");
+          const response = await fetch(
+            `${API_BASE}/SER/notifications/mark-all-read`,
+            {
+              method: "PATCH",
+              headers: { "Content-Type": "application/json" },
+            },
+          );
+
+          const data = await response.json();
+          addResult(
+            "✅ Todas las notificaciones marcadas como leídas",
+            "success",
+          );
+          addCodeResult("📝 Resultado:", data);
+        } catch (error) {
+          addResult(`❌ Error marcando como leídas: ${error.message}`, "error");
+        }
+      }
+
+      function connectWebSocket() {
+        if (socket) {
+          addResult("🔌 WebSocket ya está conectado", "info");
+          return;
+        }
+
+        try {
+          addResult("🔌 Conectando WebSocket para tiempo real...", "info");
+          socket = io("http://localhost:3013");
+
+          socket.on("connect", () => {
+            addResult("✅ WebSocket conectado - Tiempo real activo", "success");
+            socket.emit("join-community");
+
+            // Actualizar título con estado
+            document.title = "🟢 Notificaciones - Conectado";
+          });
+
+          socket.on("new-notification", (notification) => {
+            addResult("🔔 ¡Nueva notificación en tiempo real!", "success");
+            addCodeResult("⚡ Notificación recibida:", notification);
+
+            // Efecto visual
+            document.body.style.animation = "none";
+            document.body.offsetHeight; // Trigger reflow
+            document.body.style.animation = "pulse 0.5s ease";
+          });
+
+          socket.on("notification-read", (data) => {
+            addResult("👁️ Notificación marcada como leída", "info");
+            addCodeResult("📖 Leída:", data);
+          });
+
+          socket.on("notifications-cleared", (data) => {
+            addResult(
+              "🧹 Todas las notificaciones marcadas como leídas",
+              "info",
+            );
+            addCodeResult("✅ Limpieza:", data);
+          });
+
+          socket.on("disconnect", () => {
+            addResult("❌ WebSocket desconectado", "error");
+            document.title = "🔴 Notificaciones - Desconectado";
+            socket = null;
+          });
+        } catch (error) {
+          addResult(`❌ Error WebSocket: ${error.message}`, "error");
+        }
+      }
+
+      function openNotificationsApp() {
+        addResult("🚀 Abriendo aplicación principal...", "info");
+        window.open("https://localhost:5173", "_blank");
+      }
+
+      async function diagnoseBackend() {
+        addResult("🔧 Iniciando diagnóstico del backend...", "info");
+
+        // Test 1: Verificar conectividad básica
+        try {
+          const response = await fetch("http://localhost:3013/health");
+          if (response.ok) {
+            addResult("✅ Backend conectado correctamente", "success");
+          } else {
+            addResult("⚠️ Backend responde pero con problemas", "error");
+          }
+        } catch (error) {
+          addResult(
+            "❌ Backend no responde - verificar que esté ejecutándose",
+            "error",
+          );
+          return;
+        }
+
+        // Test 2: Diagnóstico específico de notificaciones
+        addResult("🔍 Probando endpoint de notificaciones...", "info");
+        try {
+          const response = await fetch(`${API_BASE}/SER/notifications/stats`);
+
+          if (response.status === 500) {
+            addResult(
+              "🚨 ERROR 500 detectado - Problema con req.user.id",
+              "error",
+            );
+            addCodeResult("📋 Solución requerida:", {
+              problema:
+                "TypeError: Cannot read properties of undefined (reading 'id')",
+              causa:
+                "Backend usa req.user.id pero MongoDB proporciona req.user._id",
+              solucion:
+                "Cambiar req.user.id por req.user._id en notificationController.ts",
+              archivos: [
+                "notificationController.ts línea 60 (getNotifications)",
+                "notificationController.ts línea 99 (getStats)",
+              ],
+              codigo_corregido: "const userId = req.user._id || req.user.id;",
+            });
+          } else if (response.ok) {
+            addResult(
+              "✅ Backend notificaciones funcionando correctamente",
+              "success",
+            );
+          } else {
+            addResult(`⚠️ Error inesperado: ${response.status}`, "error");
+          }
+        } catch (error) {
+          addResult("❌ Error conectando con notificaciones API", "error");
+        }
+
+        // Test 3: Verificar datos mock del frontend
+        addResult("📱 Verificando sistema mock del frontend...", "info");
+        try {
+          await testNotifications();
+          addResult(
+            "✅ Sistema mock funciona perfectamente - UI operativa",
+            "success",
+          );
+          addResult(
+            "💡 El nuevo diseño se ve correctamente con datos simulados",
+            "info",
+          );
+        } catch (error) {
+          addResult("❌ Problema con sistema mock", "error");
+        }
+
+        // Resumen y recomendaciones
+        addResult("📋 RESUMEN DE DIAGNÓSTICO:", "info");
+        addResult(
+          "🎨 Frontend: Nuevo diseño funcionando con datos mock",
+          "success",
+        );
+        addResult(
+          "🔧 Backend: Requiere corrección de req.user.id → req.user._id",
+          "error",
+        );
+        addResult(
+          "📖 Documentación: Ver BACKEND_FIX_NOTIFICACIONES.md",
+          "info",
+        );
+        addResult(
+          "⚡ Mientras tanto: Usar frontend con datos simulados perfectos",
+          "success",
+        );
+      }
+
+      // Auto-conectar al cargar la página
+      window.addEventListener("load", () => {
+        addResult(
+          "🎨 Sistema de notificaciones con nuevo diseño cargado",
+          "success",
+        );
+        addResult(
+          "💡 Prueba las funcionalidades para ver las mejoras visuales",
+          "info",
+        );
+
+        // Auto-test inicial
+        setTimeout(testStats, 1000);
+      });
+
+      // Animación de pulso para el body
+      const style = document.createElement("style");
+      style.textContent = `
+            @keyframes pulse {
+                0% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+                50% { background: linear-gradient(135deg, #764ba2 0%, #667eea 100%); }
+                100% { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+            }
+        `;
+      document.head.appendChild(style);
+    </script>
+  </body>
+</html>

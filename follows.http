@@ -1,0 +1,120 @@
+### Sistema de Follows - Tests Backend
+
+# Variables
+@baseUrl = http://localhost:3013/api/social
+@authToken = TU_TOKEN_AQUI
+@userId1 = 676e737b123456789abcdef1
+@userId2 = 676e737b123456789abcdef2
+@targetUserId = 676e737b123456789abcdef3
+
+### 1. Seguir a un usuario
+POST {{baseUrl}}/follows
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "targetUserId": "{{targetUserId}}"
+}
+
+### 2. Dejar de seguir a un usuario
+DELETE {{baseUrl}}/follows
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "targetUserId": "{{targetUserId}}"
+}
+
+### 3. Obtener estadísticas de follows de un usuario
+GET {{baseUrl}}/follows/{{targetUserId}}/stats
+Authorization: Bearer {{authToken}}
+
+### 4. Obtener estadísticas con viewerId específico
+GET {{baseUrl}}/follows/{{targetUserId}}/stats?viewerId={{userId1}}
+Authorization: Bearer {{authToken}}
+
+### 5. Listar seguidores de un usuario
+GET {{baseUrl}}/follows/{{targetUserId}}/followers
+Authorization: Bearer {{authToken}}
+
+### 6. Listar seguidores con paginación
+GET {{baseUrl}}/follows/{{targetUserId}}/followers?limit=10&cursor=2024-01-15T10:00:00.000Z
+Authorization: Bearer {{authToken}}
+
+### 7. Listar usuarios que sigue
+GET {{baseUrl}}/follows/{{targetUserId}}/following
+Authorization: Bearer {{authToken}}
+
+### 8. Listar usuarios que sigue con paginación
+GET {{baseUrl}}/follows/{{targetUserId}}/following?limit=10&cursor=2024-01-15T10:00:00.000Z
+Authorization: Bearer {{authToken}}
+
+### 9. Obtener sugerencias de usuarios para seguir
+GET {{baseUrl}}/follows/suggestions
+Authorization: Bearer {{authToken}}
+
+### 10. Obtener sugerencias con límite específico
+GET {{baseUrl}}/follows/suggestions?limit=5
+Authorization: Bearer {{authToken}}
+
+### 11. Intentar seguirse a sí mismo (debería fallar)
+POST {{baseUrl}}/follows
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "targetUserId": "{{userId1}}"
+}
+
+### 12. Seguir a usuario inexistente (debería fallar)
+POST {{baseUrl}}/follows
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "targetUserId": "123456789012345678901234"
+}
+
+### 13. Seguir a usuario ya seguido (debería fallar)
+POST {{baseUrl}}/follows
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "targetUserId": "{{targetUserId}}"
+}
+
+### 14. Dejar de seguir a usuario no seguido (debería fallar)
+DELETE {{baseUrl}}/follows
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "targetUserId": "123456789012345678901234"
+}
+
+### 15. Test con datos inválidos - ID muy corto
+POST {{baseUrl}}/follows
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "targetUserId": "123"
+}
+
+### 16. Test con datos inválidos - ID muy largo
+POST {{baseUrl}}/follows
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+  "targetUserId": "123456789012345678901234567890"
+}
+
+### 17. Test sin targetUserId
+POST {{baseUrl}}/follows
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+}

@@ -11,7 +11,12 @@ import {
 import { Types } from "mongoose";
 
 export class PostService {
-  async createPost(authorId: string, content: string, images: string[]) {
+  async createPost(
+    authorId: string,
+    content: string,
+    images: string[],
+    imageCropData?: any[]
+  ) {
     const clean = sanitizeContent(content);
     const hashtags = extractHashtags(clean);
     const mentions = extractMentions(clean);
@@ -19,6 +24,7 @@ export class PostService {
       authorId: new Types.ObjectId(authorId),
       content: clean,
       images: images?.slice(0, 4) || [],
+      imageCropData: imageCropData || [],
       hashtags,
       mentions,
     });
@@ -27,7 +33,24 @@ export class PostService {
   }
 
   async getPost(id: string) {
-    return PostModel.findById(id);
+    console.log(`📄 Obteniendo post individual ${id} con autor populado`);
+
+    const post = await PostModel.findById(id)
+      .populate({
+        path: "authorId",
+        select:
+          "username name email avatar bio isVerified followersCount followingCount createdAt",
+        match: { isActive: { $ne: false } },
+      })
+      .lean();
+
+    // Si el post existe pero no tiene autor (usuario eliminado), retornar null
+    if (post && !post.authorId) {
+      console.warn(`⚠️ Post ${id} encontrado pero autor eliminado`);
+      return null;
+    }
+
+    return post;
   }
 
   async deletePost(id: string, userId: string) {
@@ -88,35 +111,89 @@ export class PostService {
 
   async feed(userId: string, page = 1, limit = 20) {
     const skip = (page - 1) * limit;
+
+    console.log("📡 Obteniendo feed con autores populados");
+
     const items = await PostModel.find({ isActive: true })
+      .populate({
+        path: "authorId",
+        select:
+          "username name email avatar bio isVerified followersCount followingCount createdAt",
+        match: { isActive: { $ne: false } },
+      })
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean(); // Para mejor performance
+
+    // Filtrar posts sin autor (en caso de usuarios eliminados)
+    const itemsWithAuthors = items.filter((post) => post.authorId);
+
+    console.log(
+      `✅ Feed obtenido: ${itemsWithAuthors.length} posts con autores`
+    );
+
     const total = await PostModel.countDocuments({ isActive: true });
-    return { items, page, limit, total };
+    return { items: itemsWithAuthors, page, limit, total };
   }
 
   async explore(page = 1, limit = 20) {
     const skip = (page - 1) * limit;
+
+    console.log("🔍 Obteniendo explore con autores populados");
+
     const items = await PostModel.find({ isActive: true })
+      .populate({
+        path: "authorId",
+        select:
+          "username name email avatar bio isVerified followersCount followingCount createdAt",
+        match: { isActive: { $ne: false } },
+      })
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
+
+    const itemsWithAuthors = items.filter((post) => post.authorId);
+
+    console.log(
+      `✅ Explore obtenido: ${itemsWithAuthors.length} posts con autores`
+    );
+
     const total = await PostModel.countDocuments({ isActive: true });
-    return { items, page, limit, total };
+    return { items: itemsWithAuthors, page, limit, total };
   }
 
   async listByHashtag(tag: string, page = 1, limit = 20) {
     const skip = (page - 1) * limit;
+
+    console.log(
+      `🏷️ Obteniendo posts por hashtag #${tag} con autores populados`
+    );
+
     const items = await PostModel.find({ isActive: true, hashtags: tag })
+      .populate({
+        path: "authorId",
+        select:
+          "username name email avatar bio isVerified followersCount followingCount createdAt",
+        match: { isActive: { $ne: false } },
+      })
       .sort({ createdAt: -1 })
       .skip(skip)
-      .limit(limit);
+      .limit(limit)
+      .lean();
+
+    const itemsWithAuthors = items.filter((post) => post.authorId);
+
+    console.log(
+      `✅ Hashtag #${tag}: ${itemsWithAuthors.length} posts con autores`
+    );
+
     const total = await PostModel.countDocuments({
       isActive: true,
       hashtags: tag,
     });
-    return { items, page, limit, total };
+    return { items: itemsWithAuthors, page, limit, total };
   }
 
   async trending() {

@@ -5,6 +5,8 @@ import { PostModel } from "@models/Social/Post";
 import { upload } from "@middlewares/upload";
 import { emitToCommunity, emitToPost, emitToUser, hasIO } from "@socket/io";
 import { UserModel } from "@models/Users";
+import { NotificationService } from "@services/social/notificationService";
+import { Types } from "mongoose";
 
 const postService = new PostService();
 
@@ -21,10 +23,39 @@ export const createPost = async (
     const images = Array.isArray((req as any).files)
       ? (req as any).files.map((f: any) => `/uploads/social/${f.filename}`)
       : [];
+
+    // Procesar imageCropData si viene en la petición
+    let imageCropData: any[] = [];
+    if (req.body.imageCropData) {
+      try {
+        imageCropData = JSON.parse(req.body.imageCropData);
+        console.log("✂️ Datos de crop recibidos:", imageCropData);
+
+        // Validar que imageCropData tenga el formato correcto
+        if (imageCropData.length > 0) {
+          imageCropData = imageCropData.map((crop) => ({
+            x: Math.max(0, Math.min(100, crop.x || 50)),
+            y: Math.max(0, Math.min(100, crop.y || 50)),
+            scale: Math.max(50, Math.min(200, crop.scale || 100)),
+          }));
+        }
+      } catch (error) {
+        console.error("❌ Error parsing imageCropData:", error);
+        imageCropData = [];
+      }
+    }
+
+    console.log("📸 Creando post con imageCropData:", {
+      imagesCount: images.length,
+      cropDataCount: imageCropData.length,
+      cropData: imageCropData,
+    });
+
     const post = await postService.createPost(
       req.currentUser.id,
       parsed.content,
-      images
+      images,
+      imageCropData
     );
     res.json({ success: true, data: post });
     // Broadcast websocket events
@@ -42,6 +73,7 @@ export const createPost = async (
         },
         content: post.content,
         images: post.images,
+        imageCropData: post.imageCropData,
         createdAt: post.createdAt,
         likes: post.likesCount,
         comments: post.commentsCount,
@@ -96,6 +128,7 @@ export const likePost = async (req: Request, res: Response): Promise<void> => {
   const updated = await PostModel.findById(req.params.id).select("likesCount");
   const likesCount = updated?.likesCount ?? 0;
   res.json({ success: true, data: { ...result, likesCount } });
+
   // Emit like/unlike events
   try {
     const event = result.liked ? "post-liked" : "post-unliked";
@@ -105,7 +138,28 @@ export const likePost = async (req: Request, res: Response): Promise<void> => {
       : { ...base, unlikedBy: req.currentUser.id };
     emitToCommunity(event, payload);
     emitToPost(req.params.id, event, payload);
-  } catch {}
+
+    // 🔔 NUEVO: Crear notificación cuando se da like
+    if (result.liked) {
+      console.log(
+        `🔔 TRIGGER: Intentando crear notificación de like - Post: ${req.params.id}, Usuario: ${req.currentUser.id}`
+      );
+      try {
+        await NotificationService.handlePostLike(
+          new Types.ObjectId(req.params.id),
+          new Types.ObjectId(req.currentUser.id)
+        );
+        console.log(`✅ Notificación de like creada exitosamente`);
+      } catch (notifError) {
+        console.error(
+          `❌ Error específico creando notificación de like:`,
+          notifError
+        );
+      }
+    }
+  } catch (error) {
+    console.error("❌ Error en eventos de like:", error);
+  }
 };
 
 export const bookmarkPost = async (

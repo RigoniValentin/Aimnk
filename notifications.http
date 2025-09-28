@@ -1,0 +1,164 @@
+# 🔔 Sistema de Notificaciones - Tests HTTP
+
+### Variables
+@baseUrl = http://localhost:3013/api/v1/SER
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY2OWE2NGYyMWI0MmFiZDFmNDg3ZGRjNCIsImlhdCI6MTcyNzQ5MzcyMCwiZXhwIjoxNzMzNjUzNzIwfQ.VdC4lgwqe51LNsE-a_8a0GBJ_DtJRD8-g4pzKNgteqo
+
+### 1. 📊 Obtener estadísticas de notificaciones
+GET {{baseUrl}}/notifications/stats
+Authorization: Bearer {{token}}
+
+### 2. 📋 Listar notificaciones (con filtros)
+GET {{baseUrl}}/notifications?page=1&limit=10
+Authorization: Bearer {{token}}
+
+### 3. 🔍 Filtrar solo notificaciones no leídas
+GET {{baseUrl}}/notifications?unreadOnly=true&limit=5
+Authorization: Bearer {{token}}
+
+### 4. 🎯 Filtrar por tipo de notificación
+GET {{baseUrl}}/notifications?type=like&limit=10
+Authorization: Bearer {{token}}
+
+### 5. 📈 Filtrar por prioridad
+GET {{baseUrl}}/notifications?priority=high&limit=10
+Authorization: Bearer {{token}}
+
+### 6. ✅ Marcar notificación específica como leída
+PATCH {{baseUrl}}/notifications/6703171c123456789abcdef0/read
+Authorization: Bearer {{token}}
+
+### 7. ✅ Marcar TODAS las notificaciones como leídas
+PATCH {{baseUrl}}/notifications/mark-all-read
+Authorization: Bearer {{token}}
+
+### 8. 🗑️ Eliminar una notificación específica
+DELETE {{baseUrl}}/notifications/6703171c123456789abcdef0
+Authorization: Bearer {{token}}
+
+### 9. ⚙️ Obtener preferencias de notificaciones
+GET {{baseUrl}}/notifications/preferences
+Authorization: Bearer {{token}}
+
+### 10. 🔧 Actualizar preferencias de notificaciones
+PATCH {{baseUrl}}/notifications/preferences
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "likes": true,
+  "comments": true,
+  "follows": true,
+  "mentions": true,
+  "replies": true,
+  "post_shared": false,
+  "comment_like": false,
+  "follow_requests": true,
+  "achievements": true,
+  "system": true,
+  "pushNotifications": false,
+  "emailNotifications": true
+}
+
+### 11. 🧪 Crear notificación de prueba (solo desarrollo)
+POST {{baseUrl}}/notifications/test
+Authorization: Bearer {{token}}
+
+### ========================================
+### 🎯 TESTS DE INTEGRACIÓN CON OTROS ENDPOINTS
+### ========================================
+
+### 12. ❤️ Dar like a un post (debería crear notificación)
+PATCH {{baseUrl}}/posts/6703171c123456789abcdef1/like
+Authorization: Bearer {{token}}
+
+### 13. 💬 Comentar en un post (debería crear notificación)
+POST {{baseUrl}}/posts/6703171c123456789abcdef1/comments
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "postId": "6703171c123456789abcdef1",
+  "content": "¡Excelente post! Me encanta esta funcionalidad @valedev 🚀"
+}
+
+### 14. 👥 Seguir a un usuario (debería crear notificación)
+POST {{baseUrl}}/follows
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "targetUserId": "669a64f21b42abd1f487ddc5"
+}
+
+### ========================================
+### 🧪 TESTS DE VALIDACIÓN Y ERROR HANDLING
+### ========================================
+
+### 15. ❌ Test con ID inválido
+PATCH {{baseUrl}}/notifications/invalid-id/read
+Authorization: Bearer {{token}}
+
+### 16. ❌ Test con preferencias inválidas
+PATCH {{baseUrl}}/notifications/preferences
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "likes": "not-a-boolean",
+  "invalid_field": true
+}
+
+### 17. ❌ Test sin autenticación
+GET {{baseUrl}}/notifications
+
+### ========================================
+### 📊 VERIFICAR RESPUESTAS ESPERADAS
+### ========================================
+
+### Estructura esperada para GET /notifications:
+# {
+#   "success": true,
+#   "data": [
+#     {
+#       "id": "notification_id",
+#       "type": "like|comment|follow|mention|...",
+#       "title": "Título de la notificación",
+#       "message": "Mensaje descriptivo",
+#       "fromUser": {
+#         "id": "user_id",
+#         "username": "username",
+#         "displayName": "Display Name",
+#         "avatar": "avatar_url",
+#         "isVerified": false
+#       },
+#       "relatedPost": {...},  // Si aplica
+#       "relatedComment": {...},  // Si aplica
+#       "actionUrl": "/comunidad?post=123",
+#       "metadata": {},
+#       "isRead": false,
+#       "priority": "medium",
+#       "createdAt": "2025-01-01T12:00:00Z"
+#     }
+#   ],
+#   "pagination": {
+#     "page": 1,
+#     "limit": 20,
+#     "total": 45,
+#     "totalPages": 3,
+#     "hasNextPage": true,
+#     "hasPrevPage": false
+#   }
+# }
+
+### Estructura esperada para GET /notifications/stats:
+# {
+#   "success": true,
+#   "data": {
+#     "unreadCount": 5,
+#     "totalCount": 45,
+#     "todayCount": 3,
+#     "weekCount": 12,
+#     "lastSeenAt": "2025-01-01T10:00:00Z"
+#   }
+# }

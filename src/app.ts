@@ -4,6 +4,8 @@ dotenv.config();
 import "module-alias/register";
 import { httpServer } from "@server/server";
 import "@config/mongodb";
+import "@cronJobs/notificationCleanup";
+// import { initializePushCronJobs } from "@cronJobs/pushNotificationCron";
 
 export const PAYPAL_API_CLIENT = process.env.PAYPAL_API_CLIENT;
 export const PAYPAL_API_SECRET = process.env.PAYPAL_API_SECRET;
@@ -17,9 +19,12 @@ const PORT = process.env.PORT || 3013;
 export const HOST =
   process.env.NODE_ENV === "production"
     ? process.env.HOST || "https://viajealser.com"
-    : "https://localhost:" + PORT;
+    : "http://localhost:" + PORT;
 
 httpServer.listen(PORT, () => {
   console.log(`Server listening on port ${PORT}`);
   console.log(`WebSocket available at ws://localhost:${PORT}/socket.io/`);
+
+  // Inicializar cron jobs de push notifications
+  // initializePushCronJobs(); // Temporalmente comentado para debugging
 });

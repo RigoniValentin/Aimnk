@@ -1,0 +1,86 @@
+###
+### Endpoints para manejo de Username
+### Base URL: http://localhost:3013/api/v1/SER
+###
+
+### Variables
+@baseUrl = http://localhost:3013/api/v1/SER
+@token = YOUR_JWT_TOKEN_HERE
+@testUsername = nuevo_username_test
+
+###
+### 1. Verificar disponibilidad de username
+### GET /users/username/:username/check
+###
+GET {{baseUrl}}/users/username/{{testUsername}}/check
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+###
+### 2. Cambiar username del usuario actual
+### PUT /users/me/username
+###
+PUT {{baseUrl}}/users/me/username
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "username": "{{testUsername}}"
+}
+
+###
+### Ejemplos de respuestas:
+###
+
+### Respuesta de verificación de disponibilidad (disponible):
+# {
+#   "success": true,
+#   "available": true,
+#   "message": "Username disponible"
+# }
+
+### Respuesta de verificación de disponibilidad (no disponible):
+# {
+#   "success": false,
+#   "available": false,
+#   "message": "Username ya está en uso"
+# }
+
+### Respuesta de cambio exitoso:
+# {
+#   "success": true,
+#   "data": {
+#     "_id": "user_id",
+#     "username": "nuevo_username",
+#     "name": "Usuario Nombre",
+#     "email": "email@example.com",
+#     // ... resto de datos del usuario
+#   },
+#   "message": "Username actualizado exitosamente"
+# }
+
+### Respuesta de error (username en uso):
+# {
+#   "success": false,
+#   "message": "El username ya está en uso por otro usuario"
+# }
+
+### Respuesta de error de validación:
+# {
+#   "success": false,
+#   "message": "Datos de entrada inválidos",
+#   "errors": [
+#     {
+#       "message": "El username debe tener al menos 3 caracteres",
+#       "path": ["username"]
+#     }
+#   ]
+# }
+
+###
+### Reglas de validación para username:
+### - Mínimo 3 caracteres
+### - Máximo 30 caracteres  
+### - Solo letras, números y guiones bajos (_)
+### - Debe ser único en la base de datos
+###

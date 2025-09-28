@@ -28,6 +28,36 @@ export interface User extends Document {
   couponUsed?: boolean;
   resetPasswordToken?: string;
   resetPasswordExpires?: Date;
+
+  // Nuevos campos para el sistema de perfiles completo
+  location?: string;
+  website?: string;
+  birthDate?: Date;
+  coverImage?: string;
+
+  mood?: {
+    current: string;
+    emoji: string;
+    color: string;
+    updatedAt: Date;
+  };
+
+  socialLinks?: {
+    instagram: string;
+    twitter: string;
+    linkedin: string;
+    youtube: string;
+  };
+
+  interests?: string[];
+
+  privacy?: {
+    profileVisibility: "public" | "friends" | "private";
+    showEmail: boolean;
+    showStats: boolean;
+    allowMessages: boolean;
+  };
+
   comparePassword(password: string): Promise<boolean>;
   createdAt: Date;
 }

@@ -1,0 +1,13 @@
+### 🧪 QUICK TEST: Verificar imageCropData en Feed
+# Test rápido para confirmar que el sistema está funcionando
+
+### Test: Feed incluye campo imageCropData
+GET http://localhost:3013/api/v1/SER/posts/feed?page=1&limit=3
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+### VALIDAR ✅:
+# - Todos los posts deben tener el campo "imageCropData"
+# - Puede ser array vacío [] o con datos [{x:50, y:50, scale:100}]
+# - NO debe faltar el campo
+
+###

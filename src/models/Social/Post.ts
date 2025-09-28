@@ -8,6 +8,13 @@ const PostSchema = new Schema(
       default: [],
       validate: (arr: string[]) => arr.length <= 4,
     },
+    imageCropData: [
+      {
+        x: { type: Number, default: 50 }, // Posición X en porcentaje (0-100)
+        y: { type: Number, default: 50 }, // Posición Y en porcentaje (0-100)
+        scale: { type: Number, default: 100 }, // Escala en porcentaje (50-200)
+      },
+    ],
     authorId: {
       type: Schema.Types.ObjectId,
       ref: "User",
@@ -24,7 +31,10 @@ const PostSchema = new Schema(
   { timestamps: true, versionKey: false }
 );
 
+// Índices para optimización de consultas
 PostSchema.index({ createdAt: -1 });
 PostSchema.index({ hashtags: 1, createdAt: -1 });
+PostSchema.index({ isActive: 1, createdAt: -1 }); // Para feed optimizado
+PostSchema.index({ authorId: 1, isActive: 1, createdAt: -1 }); // Para posts de usuario
 
 export const PostModel = mongoose.model("Post", PostSchema);

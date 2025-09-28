@@ -1,0 +1,89 @@
+### 🧪 VALIDACIÓN DE OPTIMIZACIÓN N+1
+# Verificar que authorId retorna objeto completo, no string
+
+### Test 1: Feed Principal
+GET http://localhost:3013/api/v1/SER/posts/feed?page=1&limit=5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+### ESPERADO ✅: authorId debe ser un OBJETO con propiedades:
+# - _id (string)
+# - username (string)  
+# - name (string)
+# - email (string)
+# - avatar (string)
+# - bio (string)
+# - isVerified (boolean)
+# - followersCount (number)
+# - followingCount (number)
+# - createdAt (date)
+
+### INCORRECTO ❌: authorId siendo solo un string
+# "authorId": "689a649b1b42abd1f487ddc1" 
+
+###
+
+### Test 2: Explore
+GET http://localhost:3013/api/v1/SER/posts/explore?page=1&limit=5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+###
+
+### Test 3: Post por Hashtag
+GET http://localhost:3013/api/v1/SER/posts/hashtag/programacion?page=1&limit=5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+###
+
+### Test 4: Post Individual
+GET http://localhost:3013/api/v1/SER/posts/676794e58b913122f91ebf8d
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+###
+
+### Test 5: Posts de Usuario 
+GET http://localhost:3013/api/v1/SER/users/689a649b1b42abd1f487ddc1/posts?page=1&limit=5
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+###
+
+# 📊 VALIDACIÓN: En todos los tests, verificar que la respuesta tenga esta estructura:
+
+# CORRECTO ✅:
+# {
+#   "success": true,
+#   "data": [
+#     {
+#       "_id": "676794e58b913122f91ebf8d",
+#       "content": "Post content",
+#       "authorId": {                           ← DEBE SER OBJETO
+#         "_id": "689a649b1b42abd1f487ddc1",
+#         "username": "valedev", 
+#         "name": "Valentín Rigoni",
+#         "email": "admintest@gmail.com",
+#         "avatar": "http://localhost:3013/...",
+#         "bio": "...",
+#         "isVerified": false,
+#         "followersCount": 0,
+#         "followingCount": 0,
+#         "createdAt": "2025-08-11T21:46:03.948Z"
+#       },
+#       "likesCount": 0
+#     }
+#   ]
+# }
+
+# INCORRECTO ❌:
+# {
+#   "success": true,
+#   "data": [
+#     {
+#       "_id": "676794e58b913122f91ebf8d",
+#       "content": "Post content", 
+#       "authorId": "689a649b1b42abd1f487ddc1"  ← ERROR: ES STRING
+#     }
+#   ]
+# }
+
+# 🎯 OBJETIVO: Confirmar que la optimización N+1 funciona correctamente
+# y que todos los endpoints retornan información completa del autor
+# en una sola consulta a la base de datos.

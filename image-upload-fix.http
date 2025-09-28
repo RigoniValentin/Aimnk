@@ -1,0 +1,116 @@
+###
+### Endpoints corregidos para Upload de Imágenes
+### Base URL: http://localhost:3013/api/v1/SER
+###
+
+### Variables
+@baseUrl = http://localhost:3013/api/v1/SER
+@token = YOUR_JWT_TOKEN_HERE
+
+###
+### 1. Limpiar blob URLs existentes en la base de datos (EJECUTAR PRIMERO)
+### POST /users/cleanup-blobs
+###
+POST {{baseUrl}}/users/cleanup-blobs
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+###
+### 2. Upload Avatar (uso correcto)
+### POST /users/me/avatar
+###
+POST {{baseUrl}}/users/me/avatar
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data
+
+# Aquí se debe agregar el archivo con key "avatar"
+# En Postman/Insomnia: Body > form-data > Key: avatar, Type: File
+
+###
+### 3. Upload Cover Image (uso correcto)  
+### POST /users/me/cover
+###
+POST {{baseUrl}}/users/me/cover
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data
+
+# Aquí se debe agregar el archivo con key "cover"
+# En Postman/Insomnia: Body > form-data > Key: cover, Type: File
+
+###
+### 4. Actualizar perfil (SIN avatar ni coverImage)
+### PUT /users/me
+###
+PUT {{baseUrl}}/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Mi Nombre Actualizado",
+  "bio": "Mi nueva biografía",
+  "location": "Madrid, España",
+  "website": "https://miwebsite.com",
+  "mood": {
+    "current": "Feliz",
+    "emoji": "😊",
+    "color": "#22c55e"
+  },
+  "socialLinks": {
+    "instagram": "https://instagram.com/usuario",
+    "twitter": "https://twitter.com/usuario"
+  },
+  "interests": ["Programación", "Música", "Viajes"]
+}
+
+###
+### 5. Obtener mi perfil actualizado
+### GET /users/me
+###
+GET {{baseUrl}}/users/me
+Authorization: Bearer {{token}}
+
+###
+### RESPUESTAS ESPERADAS DESPUÉS DE LA CORRECCIÓN:
+###
+
+### Avatar upload exitoso:
+# {
+#   "success": true,
+#   "data": {
+#     "_id": "user_id",
+#     "avatar": "http://localhost:3013/uploads/avatars/avatar-1758916281886-269289626.jpeg",
+#     // ... resto del usuario
+#   },
+#   "message": "Avatar actualizado exitosamente"
+# }
+
+### Cover upload exitoso:
+# {
+#   "success": true,
+#   "data": {
+#     "_id": "user_id",
+#     "coverImage": "http://localhost:3013/uploads/covers/cover-1758916281889-348285015.jpeg",
+#     // ... resto del usuario
+#   },
+#   "message": "Portada actualizada exitosamente"
+# }
+
+### Cleanup de blobs exitoso:
+# {
+#   "success": true,
+#   "message": "Limpiadas blob URLs de 2 usuarios",
+#   "cleanedUsers": 2
+# }
+
+###
+### INSTRUCCIONES DE USO:
+###
+### 1. Ejecutar cleanup-blobs para limpiar datos existentes
+### 2. Subir avatar usando POST /users/me/avatar con multipart/form-data
+### 3. Subir cover usando POST /users/me/cover con multipart/form-data  
+### 4. Actualizar otros campos usando PUT /users/me (SIN avatar/cover)
+### 5. Las URLs generadas serán del tipo: http://localhost:3013/uploads/[avatars|covers]/filename.ext
+###
+### ❌ NO HACER: Enviar blob URLs en el body de PUT /users/me
+### ✅ HACER: Usar endpoints específicos de upload para imágenes
+###

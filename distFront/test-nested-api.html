@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test API Comentarios Anidados</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+        background: #1a1a1a;
+        color: #fff;
+      }
+      .container {
+        background: #2a2a2a;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 20px;
+      }
+      button {
+        background: #8b4513;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 4px;
+        cursor: pointer;
+        margin: 5px;
+      }
+      button:hover {
+        background: #a0522d;
+      }
+      .response {
+        background: #333;
+        padding: 15px;
+        border-radius: 4px;
+        white-space: pre-wrap;
+        font-family: monospace;
+        font-size: 12px;
+        overflow-x: auto;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 8px;
+        margin: 5px 0;
+        background: #333;
+        color: white;
+        border: 1px solid #555;
+        border-radius: 4px;
+      }
+      .comment-tree {
+        margin-left: 20px;
+        border-left: 2px solid #8b4513;
+        padding-left: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🧵 Test API Comentarios Anidados</h1>
+      <p>
+        Prueba para verificar si el backend soporta correctamente comentarios
+        anidados
+      </p>
+
+      <div>
+        <label>Token (desde localStorage):</label>
+        <input
+          type="text"
+          id="token"
+          placeholder="Se autocompleta desde localStorage"
+        />
+      </div>
+
+      <div>
+        <label>Post ID:</label>
+        <input
+          type="text"
+          id="postId"
+          value="test-nested-post-123"
+          placeholder="ID del post"
+        />
+      </div>
+
+      <div>
+        <button onclick="getComments()">📋 Obtener Comentarios</button>
+        <button onclick="createMainComment()">
+          📝 Crear Comentario Principal
+        </button>
+        <button onclick="createReplyComment()">💬 Crear Respuesta</button>
+        <button onclick="clearResponse()">🧹 Limpiar</button>
+      </div>
+    </div>
+
+    <div class="container">
+      <h3>📡 Respuesta del Servidor:</h3>
+      <div id="response" class="response">Esperando acción...</div>
+    </div>
+
+    <div class="container">
+      <h3>🌳 Estructura de Comentarios:</h3>
+      <div id="commentTree">Esperando datos...</div>
+    </div>
+
+    <script>
+      // Configuración
+      const API_BASE = "http://localhost:3013/api/v1";
+      let lastMainCommentId = null;
+
+      // Cargar token desde localStorage
+      window.onload = function () {
+        const token = localStorage.getItem("token");
+        if (token) {
+          document.getElementById("token").value = token.replace(/"/g, "");
+        }
+      };
+
+      function getToken() {
+        return document.getElementById("token").value.trim();
+      }
+
+      function getPostId() {
+        return (
+          document.getElementById("postId").value.trim() ||
+          "test-nested-post-123"
+        );
+      }
+
+      async function makeRequest(method, url, data = null) {
+        const token = getToken();
+        const options = {
+          method,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        };
+
+        if (data) {
+          options.body = JSON.stringify(data);
+        }
+
+        try {
+          console.log(`Making ${method} request to:`, url);
+          if (data) console.log("Data:", data);
+
+          const response = await fetch(url, options);
+          const result = await response.json();
+
+          console.log("Response:", result);
+          return { status: response.status, data: result };
+        } catch (error) {
+          console.error("Request error:", error);
+          return { status: 0, error: error.message };
+        }
+      }
+
+      async function getComments() {
+        const postId = getPostId();
+        const response = await makeRequest(
+          "GET",
+          `${API_BASE}/SER/comments/post/${postId}`,
+        );
+
+        document.getElementById("response").textContent = JSON.stringify(
+          response,
+          null,
+          2,
+        );
+
+        if (response.data && response.data.success && response.data.data) {
+          displayCommentTree(response.data.data);
+        }
+      }
+
+      async function createMainComment() {
+        const postId = getPostId();
+        const content = `Comentario principal creado el ${new Date().toLocaleString()}`;
+
+        const response = await makeRequest("POST", `${API_BASE}/SER/comments`, {
+          postId,
+          content,
+        });
+
+        document.getElementById("response").textContent = JSON.stringify(
+          response,
+          null,
+          2,
+        );
+
+        if (response.data && response.data.success && response.data.data) {
+          lastMainCommentId = response.data.data._id;
+          alert(
+            `✅ Comentario creado. ID: ${lastMainCommentId.substring(0, 8)}...`,
+          );
+        }
+      }
+
+      async function createReplyComment() {
+        if (!lastMainCommentId) {
+          alert("❌ Primero crea un comentario principal");
+          return;
+        }
+
+        const postId = getPostId();
+        const content = `Respuesta al comentario ${lastMainCommentId.substring(0, 8)} creada el ${new Date().toLocaleString()}`;
+
+        const response = await makeRequest("POST", `${API_BASE}/SER/comments`, {
+          postId,
+          content,
+          parentCommentId: lastMainCommentId,
+        });
+
+        document.getElementById("response").textContent = JSON.stringify(
+          response,
+          null,
+          2,
+        );
+
+        if (response.data && response.data.success) {
+          alert("✅ Respuesta creada exitosamente");
+        }
+      }
+
+      function displayCommentTree(comments) {
+        const tree = document.getElementById("commentTree");
+        tree.innerHTML = "";
+
+        if (!comments || comments.length === 0) {
+          tree.textContent = "No hay comentarios";
+          return;
+        }
+
+        comments.forEach((comment) => {
+          const commentDiv = createCommentElement(comment);
+          tree.appendChild(commentDiv);
+        });
+      }
+
+      function createCommentElement(comment) {
+        const div = document.createElement("div");
+        div.style.marginBottom = "10px";
+        div.style.padding = "10px";
+        div.style.background = "#333";
+        div.style.borderRadius = "4px";
+
+        const isReply = comment.parentCommentId;
+        const prefix = isReply ? "└─ 💬" : "📝";
+
+        div.innerHTML = `
+                <div><strong>${prefix} ${comment._id.substring(0, 8)}...</strong> ${isReply ? `(padre: ${comment.parentCommentId.substring(0, 8)}...)` : ""}</div>
+                <div style="margin: 5px 0;">"${comment.content}"</div>
+                <div style="font-size: 12px; opacity: 0.7;">
+                    👤 ${comment.authorId?.username || comment.authorId} | 
+                    ❤️ ${comment.likesCount} | 
+                    💬 ${comment.repliesCount || 0} respuestas |
+                    📅 ${new Date(comment.createdAt).toLocaleString()}
+                </div>
+            `;
+
+        if (comment.replies && comment.replies.length > 0) {
+          const repliesContainer = document.createElement("div");
+          repliesContainer.className = "comment-tree";
+          comment.replies.forEach((reply) => {
+            repliesContainer.appendChild(createCommentElement(reply));
+          });
+          div.appendChild(repliesContainer);
+        }
+
+        return div;
+      }
+
+      function clearResponse() {
+        document.getElementById("response").textContent = "Esperando acción...";
+        document.getElementById("commentTree").textContent =
+          "Esperando datos...";
+      }
+    </script>
+  </body>
+</html>

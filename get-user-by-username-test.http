@@ -1,0 +1,135 @@
+### 🔍 TEST: Búsqueda de Usuario por Username
+# Endpoint: GET /api/v1/SER/users/username/:username
+
+### Test 1: Buscar usuario existente (valedev) ✅
+GET http://localhost:3013/api/v1/SER/users/username/valedev
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+### ESPERADO ✅: Status 200 con datos completos del usuario
+# {
+#   "success": true,
+#   "data": {
+#     "_id": "689a649b1b42abd1f487ddc1",
+#     "username": "valedev",
+#     "name": "Valentín Rigoni",
+#     "email": "admintest@gmail.com",
+#     "avatar": "http://localhost:3013/uploads/avatars/...",
+#     "bio": "Desarrollador Full Stack",
+#     "location": "Argentina",
+#     "website": "https://valedev.com",
+#     "birthDate": "1995-01-15T00:00:00.000Z",
+#     "coverImage": "http://localhost:3013/uploads/covers/...",
+#     "followersCount": 0,
+#     "followingCount": 0,
+#     "postsCount": 45,
+#     "createdAt": "2025-08-11T21:46:03.948Z",
+#     "interests": ["Desarrollo", "Música", "Tecnología"],
+#     "socialLinks": {
+#       "twitter": "https://twitter.com/valedev",
+#       "linkedin": "https://linkedin.com/in/valedev"
+#     },
+#     "mood": {
+#       "current": "Productivo",
+#       "emoji": "💻",
+#       "color": "#3B82F6"
+#     },
+#     "privacy": {
+#       "showEmail": false,
+#       "showBirthDate": false,
+#       "allowMessages": true
+#     }
+#   }
+# }
+
+###
+
+### Test 2: Buscar con case-insensitive (VALEDEV en mayúsculas) ✅
+GET http://localhost:3013/api/v1/SER/users/username/VALEDEV
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+### ESPERADO ✅: Status 200 con los mismos datos (case-insensitive funciona)
+
+###
+
+### Test 3: Usuario inexistente ❌
+GET http://localhost:3013/api/v1/SER/users/username/usuarionoexiste
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+### ESPERADO ❌: Status 404
+# {
+#   "success": false,
+#   "message": "Usuario no encontrado",
+#   "error": "USER_NOT_FOUND"
+# }
+
+###
+
+### Test 4: Username vacío ❌
+GET http://localhost:3013/api/v1/SER/users/username/
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+### ESPERADO ❌: Status 400
+# {
+#   "success": false,
+#   "message": "Username inválido",
+#   "error": "INVALID_USERNAME"
+# }
+
+###
+
+### Test 5: Sin token de autenticación ❌
+GET http://localhost:3013/api/v1/SER/users/username/valedev
+
+### ESPERADO ❌: Status 401 (Unauthorized)
+
+###
+
+### Test 6: Mixto de mayúsculas y minúsculas (ValeDev) ✅
+GET http://localhost:3013/api/v1/SER/users/username/ValeDev
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODlhNjQ5YjFiNDJhYmQxZjQ4N2RkYzEiLCJlbWFpbCI6ImFkbWludGVzdEBnbWFpbC5jb20iLCJpYXQiOjE3MzI2Nzg3MDYsImV4cCI6MTczMjc2NTEwNn0.pZgrpGDGHJJ1_U4dppvRDBiKqVVe_qH8k3Bs3XPiF48
+
+### ESPERADO ✅: Status 200 con los datos del usuario valedev
+
+###
+
+# 🎯 FUNCIONALIDADES A VALIDAR:
+
+## ✅ Funcionalidad Principal:
+# - Busca usuario por username exacto
+# - Case-insensitive (VALEDEV = valedev = ValeDev)
+# - Excluye campos sensibles (password, resetTokens)
+# - Solo usuarios activos (isActive !== false)
+
+## ✅ Respuesta Completa:
+# - Información básica: username, name, email, avatar, bio
+# - Información extendida: location, website, birthDate, coverImage
+# - Estadísticas: followersCount, followingCount, postsCount
+# - Configuración: interests, socialLinks, mood, privacy
+# - Metadatos: _id, createdAt
+
+## ✅ Manejo de Errores:
+# - 404: Usuario no encontrado
+# - 400: Username inválido (vacío o mal formato)
+# - 401: Sin token de autenticación
+# - 500: Error interno del servidor
+
+## ✅ Seguridad:
+# - Requiere autenticación (Bearer token)
+# - No expone contraseñas ni tokens sensibles
+# - Respeta configuración de privacidad
+
+## ✅ Performance:
+# - Usa índices de MongoDB para búsquedas rápidas
+# - Query optimizada con regex case-insensitive
+# - Select específico para excluir campos sensibles
+
+# 🚀 CASOS DE USO:
+# - Navegación a perfil desde comentarios: @valedev → /users/username/valedev
+# - Búsqueda de usuario para mensajes directos
+# - Validación de existencia de usuario
+# - Obtener información pública de perfil
+
+# 📊 LOGS ESPERADOS EN CONSOLA:
+# 🔍 Buscando usuario por username: valedev
+# ✅ Usuario encontrado: valedev (ID: 689a649b1b42abd1f487ddc1)
+# ❌ Usuario no encontrado: usuarionoexiste

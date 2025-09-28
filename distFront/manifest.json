@@ -1,0 +1,81 @@
+{
+  "name": "AIMNK - Comunidad Digital",
+  "short_name": "AIMNK",
+  "description": "Plataforma de comunidad digital para conexiones auténticas y crecimiento personal",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#1E2027",
+  "theme_color": "#DDA148",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "es",
+  "categories": ["social", "lifestyle", "productivity"],
+  "icons": [
+    {
+      "src": "/favicon.ico",
+      "sizes": "16x16 32x32",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/vite.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/BackgroundInicio-C1W9q08A.jpg",
+      "sizes": "1280x720",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Pantalla principal de AIMNK"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Comunidad",
+      "short_name": "Feed",
+      "description": "Ver el feed de la comunidad",
+      "url": "/comunidad",
+      "icons": [{ "src": "/vite.svg", "sizes": "96x96" }]
+    },
+    {
+      "name": "Mi Perfil",
+      "short_name": "Perfil",
+      "description": "Ver mi perfil personal",
+      "url": "/profile",
+      "icons": [{ "src": "/vite.svg", "sizes": "96x96" }]
+    },
+    {
+      "name": "Notificaciones",
+      "short_name": "Alertas",
+      "description": "Ver mis notificaciones",
+      "url": "/notificaciones",
+      "icons": [{ "src": "/vite.svg", "sizes": "96x96" }]
+    }
+  ],
+  "related_applications": [],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  },
+  "launch_handler": {
+    "client_mode": "focus-existing"
+  },
+  "protocol_handlers": [
+    {
+      "protocol": "web+aimnk",
+      "url": "/share?url=%s"
+    }
+  ],
+  "share_target": {
+    "action": "/share",
+    "method": "GET",
+    "params": {
+      "title": "title",
+      "text": "text",
+      "url": "url"
+    }
+  }
+}
