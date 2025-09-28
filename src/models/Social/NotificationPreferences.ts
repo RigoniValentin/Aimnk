@@ -82,9 +82,9 @@ const NotificationPreferencesSchema = new Schema<INotificationPreferences>(
     toJSON: {
       transform: function (doc, ret) {
         ret.id = ret._id;
-        delete ret._id;
-        delete ret.__v;
-        delete ret.userId; // No exponer el userId en la respuesta
+        delete (ret as any)._id;
+        delete (ret as any).__v;
+        delete (ret as any).userId; // No exponer el userId en la respuesta
         return ret;
       },
     },
