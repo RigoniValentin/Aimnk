@@ -49,11 +49,6 @@ import {
 } from "@controllers/social/followsController";
 import { getUserSuggestions } from "@controllers/social/userSuggestionsController";
 import {
-  listNotifications,
-  markAllNotificationsRead,
-  markNotificationRead,
-} from "@controllers/social/notificationsController";
-import {
   getProfile,
   updateProfile,
   uploadAvatar,
