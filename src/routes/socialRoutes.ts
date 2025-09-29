@@ -180,6 +180,10 @@ router.post(
 // Profile routes
 router.get("/profiles/:userId", verifyToken, getProfile);
 router.put("/profiles/:userId", verifyToken, updateProfile);
+
+// Alias routes for frontend compatibility
+router.get("/users/profile/:userId", verifyToken, getProfile);
+router.put("/users/profile/:userId", verifyToken, updateProfile);
 router.post(
   "/profiles/:userId/avatar",
   verifyToken,
