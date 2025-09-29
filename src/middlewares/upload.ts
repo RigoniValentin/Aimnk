@@ -31,7 +31,7 @@ const fileFilter: multer.Options["fileFilter"] = (req, file, cb) => {
 export const upload = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 },
+  limits: { fileSize: 15 * 1024 * 1024 }, // 16MB para uploads generales
 });
 
 // Storage específico para avatars
@@ -63,11 +63,11 @@ const coverStorage = multer.diskStorage({
 export const uploadAvatar = multer({
   storage: avatarStorage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB para avatars
+  limits: { fileSize: 15 * 1024 * 1024 }, // 25MB para avatars
 });
 
 export const uploadCover = multer({
   storage: coverStorage,
   fileFilter,
-  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB para covers
+  limits: { fileSize: 30 * 1024 * 1024 }, // 50MB para covers
 });

@@ -82,7 +82,7 @@ import {
   likesLimiter,
   followsLimiter,
 } from "@middlewares/rateLimit";
-import { upload } from "@middlewares/upload";
+import { upload, uploadAvatar, uploadCover } from "@middlewares/upload";
 import { pushNotificationController } from "@controllers/pushNotificationController";
 import {
   listAllQna,
@@ -242,25 +242,25 @@ export default () => {
   router.post(
     "/users/upload-avatar",
     verifyToken,
-    upload.single("avatar"),
+    uploadAvatar.single("avatar"),
     uploadUserAvatar
   );
   router.post(
     "/users/me/avatar",
     verifyToken,
-    upload.single("avatar"),
+    uploadAvatar.single("avatar"),
     uploadUserAvatar
   );
   router.post(
     "/users/upload-cover",
     verifyToken,
-    upload.single("cover"),
+    uploadCover.single("cover"),
     uploadUserCover
   );
   router.post(
     "/users/me/cover",
     verifyToken,
-    upload.single("cover"),
+    uploadCover.single("cover"),
     uploadUserCover
   );
   // #endregion
