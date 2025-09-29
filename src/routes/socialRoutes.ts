@@ -117,6 +117,20 @@ router.post(
   uploadCoverMiddleware.single("cover"),
   uploadUserCover
 );
+
+// Alias routes for frontend compatibility
+router.post(
+  "/users/upload-avatar",
+  verifyToken,
+  uploadAvatarMiddleware.single("avatar"),
+  uploadUserAvatar
+);
+router.post(
+  "/users/upload-cover",
+  verifyToken,
+  uploadCoverMiddleware.single("cover"),
+  uploadUserCover
+);
 router.get(
   "/users/username/:username/check",
   verifyToken,
