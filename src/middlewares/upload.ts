@@ -63,11 +63,11 @@ const coverStorage = multer.diskStorage({
 export const uploadAvatar = multer({
   storage: avatarStorage,
   fileFilter,
-  limits: { fileSize: 15 * 1024 * 1024 }, // 25MB para avatars
+  limits: { fileSize: 25 * 1024 * 1024 }, // 25MB para avatars
 });
 
 export const uploadCover = multer({
   storage: coverStorage,
   fileFilter,
-  limits: { fileSize: 30 * 1024 * 1024 }, // 50MB para covers
+  limits: { fileSize: 50 * 1024 * 1024 }, // 50MB para covers
 });

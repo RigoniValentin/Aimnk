@@ -111,3 +111,15 @@ Authorization: Bearer YOUR_JWT_TOKEN
 # Test 16: Get follow stats (Direct route - NEW!)
 GET http://localhost:3013/api/v1/follows/689a64f21b42abd1f487ddc4/stats
 Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 17: Follow user - SER route (NEW!)
+POST http://localhost:3013/api/v1/SER/users/689a64f21b42abd1f487ddc4/follow
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 18: Unfollow user - SER route (NEW!)
+DELETE http://localhost:3013/api/v1/SER/users/689a64f21b42abd1f487ddc4/follow
+Authorization: Bearer YOUR_JWT_TOKEN

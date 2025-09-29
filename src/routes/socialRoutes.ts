@@ -98,6 +98,28 @@ router.get("/follows/:userId/stats", verifyToken, getFollowStats);
 router.get("/follows/:userId/followers", verifyToken, listFollowers);
 router.get("/follows/:userId/following", verifyToken, listFollowing);
 router.get("/follows/suggestions", verifyToken, suggestions);
+
+// Alias routes for frontend compatibility - Follow/Unfollow by user ID
+router.post(
+  "/users/:userId/follow",
+  verifyToken,
+  followsLimiter,
+  async (req, res) => {
+    // Convertir ruta de usuario a formato follows estándar
+    req.body = { ...req.body, userId: req.params.userId };
+    await followUser(req, res);
+  }
+);
+router.delete(
+  "/users/:userId/follow",
+  verifyToken,
+  followsLimiter,
+  async (req, res) => {
+    // Convertir ruta de usuario a formato follows estándar
+    req.body = { ...req.body, userId: req.params.userId };
+    await unfollowUser(req, res);
+  }
+);
 router.get("/users/me", verifyToken, getMe);
 router.put("/users/me", verifyToken, updateMe);
 router.post(
