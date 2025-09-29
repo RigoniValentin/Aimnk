@@ -82,3 +82,32 @@ Authorization: Bearer YOUR_JWT_TOKEN
 # Test 12: Get posts explore (Direct route - NEW!)
 GET http://localhost:3013/api/v1/posts/explore  
 Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 13: Follow user - Standard route (Direct route - NEW!)
+POST http://localhost:3013/api/v1/follows
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: application/json
+
+{
+  "userId": "689a64f21b42abd1f487ddc4"
+}
+
+###
+
+# Test 14: Follow user - User route (Direct route - NEW!)
+POST http://localhost:3013/api/v1/users/689a64f21b42abd1f487ddc4/follow
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 15: Unfollow user - User route (Direct route - NEW!)
+DELETE http://localhost:3013/api/v1/users/689a64f21b42abd1f487ddc4/follow
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 16: Get follow stats (Direct route - NEW!)
+GET http://localhost:3013/api/v1/follows/689a64f21b42abd1f487ddc4/stats
+Authorization: Bearer YOUR_JWT_TOKEN

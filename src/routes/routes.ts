@@ -69,9 +69,18 @@ import {
 } from "@controllers/social/postsController";
 import { getUserPosts } from "@controllers/social/usersController";
 import {
+  followUser,
+  unfollowUser,
+  getFollowStats,
+  listFollowers,
+  listFollowing,
+  suggestions,
+} from "@controllers/social/followsController";
+import {
   postsLimiter,
   commentsLimiter,
   likesLimiter,
+  followsLimiter,
 } from "@middlewares/rateLimit";
 import { upload } from "@middlewares/upload";
 import { pushNotificationController } from "@controllers/pushNotificationController";
@@ -283,6 +292,35 @@ export default () => {
   router.post("/posts/:id/like", verifyToken, likesLimiter, likePost);
   router.post("/posts/:id/bookmark", verifyToken, bookmarkPost);
   router.post("/posts/:id/share", verifyToken, sharePost);
+  // #endregion
+
+  // #region Direct Follows Routes (for frontend compatibility)
+  router.post("/follows", verifyToken, followsLimiter, followUser);
+  router.delete("/follows", verifyToken, followsLimiter, unfollowUser);
+  router.post(
+    "/users/:userId/follow",
+    verifyToken,
+    followsLimiter,
+    async (req, res) => {
+      // Convertir ruta de usuario a formato follows estándar
+      req.body = { ...req.body, userId: req.params.userId };
+      await followUser(req, res);
+    }
+  );
+  router.delete(
+    "/users/:userId/follow",
+    verifyToken,
+    followsLimiter,
+    async (req, res) => {
+      // Convertir ruta de usuario a formato follows estándar
+      req.body = { ...req.body, userId: req.params.userId };
+      await unfollowUser(req, res);
+    }
+  );
+  router.get("/follows/:userId/stats", verifyToken, getFollowStats);
+  router.get("/follows/:userId/followers", verifyToken, listFollowers);
+  router.get("/follows/:userId/following", verifyToken, listFollowing);
+  router.get("/users/suggestions", verifyToken, suggestions);
   // #endregion
 
   // #region Direct Push Notifications Routes (for frontend compatibility)
