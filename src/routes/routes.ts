@@ -67,9 +67,7 @@ import {
   trending,
   sharePost,
 } from "@controllers/social/postsController";
-import {
-  getUserPosts,
-} from "@controllers/social/usersController";
+import { getUserPosts } from "@controllers/social/usersController";
 import {
   postsLimiter,
   commentsLimiter,
@@ -249,7 +247,7 @@ export default () => {
 
   // #region Direct Comments Routes (for frontend compatibility)
   router.get("/posts/:postId/comments", verifyToken, listPostComments);
-  router.get("/comments/post/:postId", verifyToken, listPostComments);  // Alternative route that frontend is using
+  router.get("/comments/post/:postId", verifyToken, listPostComments); // Alternative route that frontend is using
   router.post("/comments", verifyToken, commentsLimiter, createComment);
   router.post("/comments/:id/like", verifyToken, likesLimiter, likeComment);
   router.delete("/comments/:id", verifyToken, deleteComment);
@@ -260,7 +258,13 @@ export default () => {
   router.get("/posts/explore", verifyToken, explore);
   router.get("/posts/hashtag/:tag", verifyToken, byHashtag);
   router.get("/posts/trending", verifyToken, trending);
-  router.post("/posts", verifyToken, upload.array("media", 10), postsLimiter, createPost);
+  router.post(
+    "/posts",
+    verifyToken,
+    upload.array("media", 10),
+    postsLimiter,
+    createPost
+  );
   router.get("/posts/:id", verifyToken, getPost);
   router.get("/posts/user/:userId", getUserPosts);
   router.get("/users/:id/posts", verifyToken, getUserPosts);
