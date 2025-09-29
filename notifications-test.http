@@ -1,0 +1,72 @@
+### Test Notification Endpoints (Direct API Routes)
+### Note: Replace YOUR_JWT_TOKEN with a valid JWT token from login
+
+# Test 1: Get notifications (Direct route - NEW!)
+GET http://localhost:3013/api/v1/notifications
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 2: Get notifications (Original social route)  
+GET http://localhost:3013/api/v1/SER/notifications
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 3: Get notification stats (Direct route - NEW!)
+GET http://localhost:3013/api/v1/notifications/stats
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 4: Get user profile (Direct route - NEW!)
+GET http://localhost:3013/api/v1/users/profile
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 5: Get user profile (Alternative direct route - NEW!)
+GET http://localhost:3013/api/v1/profiles/me
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 6: Get user profile (Original social route)
+GET http://localhost:3013/api/v1/SER/users/me
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 7: Mark notification as read (Direct route - NEW!)
+POST http://localhost:3013/api/v1/notifications/12345/read
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 8: Mark all notifications as read (Direct route - NEW!)
+POST http://localhost:3013/api/v1/notifications/mark-all-read
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 9: Get post comments (Direct route - NEW!)
+GET http://localhost:3013/api/v1/comments/post/68d9d911d49d8dca7ace6aa6
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 10: Get post comments (Alternative direct route - NEW!)
+GET http://localhost:3013/api/v1/posts/68d9d911d49d8dca7ace6aa6/comments
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 11: Get posts feed (Direct route - NEW!)
+GET http://localhost:3013/api/v1/posts/feed
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 12: Get posts explore (Direct route - NEW!)
+GET http://localhost:3013/api/v1/posts/explore  
+Authorization: Bearer YOUR_JWT_TOKEN

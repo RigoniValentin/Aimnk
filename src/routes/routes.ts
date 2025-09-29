@@ -43,6 +43,39 @@ import stationsRoutes from "./stationsRoutes";
 import socialRoutes from "./socialRoutes";
 import testRoutes from "./testRoutes";
 import pushNotificationRoutes from "./pushNotificationRoutes";
+import { NotificationController } from "@controllers/social/notificationController";
+import {
+  getMe,
+  uploadUserAvatar,
+  uploadUserCover,
+} from "@controllers/social/usersController";
+import {
+  createComment,
+  listPostComments,
+  likeComment,
+  deleteComment,
+} from "@controllers/social/commentsController";
+import {
+  createPost,
+  getPost,
+  deletePost,
+  likePost,
+  bookmarkPost,
+  feed,
+  explore,
+  byHashtag,
+  trending,
+  sharePost,
+} from "@controllers/social/postsController";
+import {
+  getUserPosts,
+} from "@controllers/social/usersController";
+import {
+  postsLimiter,
+  commentsLimiter,
+  likesLimiter,
+} from "@middlewares/rateLimit";
+import { upload } from "@middlewares/upload";
 import {
   listAllQna,
   listMineQna,
@@ -135,6 +168,106 @@ export default () => {
   // #region Stations Routes
   // Monta todas las rutas de estaciones bajo /api/v1/stations
   router.use("/stations", stationsRoutes);
+  // #endregion
+
+  // #region Direct Notification Routes (for frontend compatibility)
+  router.get(
+    "/notifications",
+    verifyToken,
+    NotificationController.getNotifications
+  );
+  router.get(
+    "/notifications/stats",
+    verifyToken,
+    NotificationController.getStats
+  );
+  router.post(
+    "/notifications/:id/read",
+    verifyToken,
+    NotificationController.markAsRead
+  );
+  router.post(
+    "/notifications/mark-all-read",
+    verifyToken,
+    NotificationController.markAllAsRead
+  );
+  router.delete(
+    "/notifications/:id",
+    verifyToken,
+    NotificationController.deleteNotification
+  );
+  router.get(
+    "/notifications/preferences",
+    verifyToken,
+    NotificationController.getPreferences
+  );
+  router.put(
+    "/notifications/preferences",
+    verifyToken,
+    NotificationController.updatePreferences
+  );
+  router.post(
+    "/notifications/reset-preferences",
+    verifyToken,
+    NotificationController.resetPreferences
+  );
+  router.post(
+    "/notifications/test",
+    verifyToken,
+    NotificationController.createTestNotification
+  );
+  // #endregion
+
+  // #region Direct User Profile Routes (for frontend compatibility)
+  router.get("/users/profile", verifyToken, getMe);
+  router.get("/profiles/me", verifyToken, getMe);
+  router.post(
+    "/users/upload-avatar",
+    verifyToken,
+    upload.single("avatar"),
+    uploadUserAvatar
+  );
+  router.post(
+    "/users/me/avatar",
+    verifyToken,
+    upload.single("avatar"),
+    uploadUserAvatar
+  );
+  router.post(
+    "/users/upload-cover",
+    verifyToken,
+    upload.single("cover"),
+    uploadUserCover
+  );
+  router.post(
+    "/users/me/cover",
+    verifyToken,
+    upload.single("cover"),
+    uploadUserCover
+  );
+  // #endregion
+
+  // #region Direct Comments Routes (for frontend compatibility)
+  router.get("/posts/:postId/comments", verifyToken, listPostComments);
+  router.get("/comments/post/:postId", verifyToken, listPostComments);  // Alternative route that frontend is using
+  router.post("/comments", verifyToken, commentsLimiter, createComment);
+  router.post("/comments/:id/like", verifyToken, likesLimiter, likeComment);
+  router.delete("/comments/:id", verifyToken, deleteComment);
+  // #endregion
+
+  // #region Direct Posts Routes (for frontend compatibility)
+  router.get("/posts/feed", verifyToken, feed);
+  router.get("/posts/explore", verifyToken, explore);
+  router.get("/posts/hashtag/:tag", verifyToken, byHashtag);
+  router.get("/posts/trending", verifyToken, trending);
+  router.post("/posts", verifyToken, upload.array("media", 10), postsLimiter, createPost);
+  router.get("/posts/:id", verifyToken, getPost);
+  router.get("/posts/user/:userId", getUserPosts);
+  router.get("/users/:id/posts", verifyToken, getUserPosts);
+  router.delete("/posts/:id", verifyToken, deletePost);
+  router.post("/posts/:id/like", verifyToken, likesLimiter, likePost);
+  router.post("/posts/:id/bookmark", verifyToken, bookmarkPost);
+  router.post("/posts/:id/share", verifyToken, sharePost);
   // #endregion
 
   // #region Social (Comunidad) Routes
