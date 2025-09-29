@@ -1,0 +1,54 @@
+### Test Push Notifications Endpoints
+
+# Test 1: Get VAPID public key (Direct route - NEW!)
+GET http://localhost:3013/api/v1/push/vapid-key
+
+###
+
+# Test 2: Get VAPID public key (Original route)
+GET http://localhost:3013/api/v1/push/vapid-key
+
+### 
+
+# Test 3: Subscribe to push notifications (Direct route - NEW!)
+POST http://localhost:3013/api/v1/push/subscribe
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: application/json
+
+{
+  "subscription": {
+    "endpoint": "https://fcm.googleapis.com/fcm/send/test-endpoint",
+    "keys": {
+      "p256dh": "test-p256dh-key",
+      "auth": "test-auth-key"
+    }
+  }
+}
+
+###
+
+# Test 4: Get user subscriptions (Direct route - NEW!)
+GET http://localhost:3013/api/v1/push/subscriptions
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 5: Send test notification (Direct route - NEW!)  
+POST http://localhost:3013/api/v1/push/test
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: application/json
+
+{
+  "message": "Test notification from backend"
+}
+
+###
+
+# Test 6: Unsubscribe from push notifications (Direct route - NEW!)
+POST http://localhost:3013/api/v1/push/unsubscribe
+Authorization: Bearer YOUR_JWT_TOKEN
+Content-Type: application/json
+
+{
+  "endpoint": "https://fcm.googleapis.com/fcm/send/test-endpoint"
+}

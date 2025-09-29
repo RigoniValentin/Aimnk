@@ -74,6 +74,7 @@ import {
   likesLimiter,
 } from "@middlewares/rateLimit";
 import { upload } from "@middlewares/upload";
+import { pushNotificationController } from "@controllers/pushNotificationController";
 import {
   listAllQna,
   listMineQna,
@@ -272,6 +273,22 @@ export default () => {
   router.post("/posts/:id/like", verifyToken, likesLimiter, likePost);
   router.post("/posts/:id/bookmark", verifyToken, bookmarkPost);
   router.post("/posts/:id/share", verifyToken, sharePost);
+  // #endregion
+
+  // #region Direct Push Notifications Routes (for frontend compatibility)
+  router.get("/push/vapid-key", (req, res, next) => {
+    console.log("🔑 Llamada a VAPID key recibida");
+    next();
+  }, pushNotificationController.getVapidKey);
+  
+  router.post("/push/subscribe", (req, res, next) => {
+    console.log("📱 Llamada a push/subscribe recibida:", req.body);
+    next();
+  }, verifyToken, pushNotificationController.subscribe);
+  
+  router.post("/push/unsubscribe", verifyToken, pushNotificationController.unsubscribe);
+  router.get("/push/subscriptions", verifyToken, pushNotificationController.getSubscriptions);
+  router.post("/push/test", verifyToken, pushNotificationController.sendTest);
   // #endregion
 
   // #region Social (Comunidad) Routes
