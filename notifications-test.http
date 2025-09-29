@@ -37,14 +37,26 @@ Authorization: Bearer YOUR_JWT_TOKEN
 
 ###
 
-# Test 7: Mark notification as read (Direct route - NEW!)
+# Test 7: Mark notification as read - POST (Direct route - NEW!)
 POST http://localhost:3013/api/v1/notifications/12345/read
 Authorization: Bearer YOUR_JWT_TOKEN
 
 ###
 
-# Test 8: Mark all notifications as read (Direct route - NEW!)
+# Test 7b: Mark notification as read - PATCH (Direct route - NEW!)
+PATCH http://localhost:3013/api/v1/notifications/12345/read
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 8: Mark all notifications as read - POST (Direct route - NEW!)
 POST http://localhost:3013/api/v1/notifications/mark-all-read
+Authorization: Bearer YOUR_JWT_TOKEN
+
+###
+
+# Test 8b: Mark all notifications as read - PATCH (Direct route - NEW!)
+PATCH http://localhost:3013/api/v1/notifications/mark-all-read
 Authorization: Bearer YOUR_JWT_TOKEN
 
 ###

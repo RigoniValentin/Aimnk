@@ -23,7 +23,7 @@ function generateVapidKeys() {
   try {
     // Generar claves VAPID usando web-push (formato correcto)
     const vapidKeys = webpush.generateVAPIDKeys();
-    
+
     const publicKeyBase64 = vapidKeys.publicKey;
     const privateKeyBase64 = vapidKeys.privateKey;
 

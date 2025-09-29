@@ -185,7 +185,17 @@ export default () => {
     verifyToken,
     NotificationController.markAsRead
   );
+  router.patch(
+    "/notifications/:id/read",
+    verifyToken,
+    NotificationController.markAsRead
+  );
   router.post(
+    "/notifications/mark-all-read",
+    verifyToken,
+    NotificationController.markAllAsRead
+  );
+  router.patch(
     "/notifications/mark-all-read",
     verifyToken,
     NotificationController.markAllAsRead
@@ -276,18 +286,35 @@ export default () => {
   // #endregion
 
   // #region Direct Push Notifications Routes (for frontend compatibility)
-  router.get("/push/vapid-key", (req, res, next) => {
-    console.log("🔑 Llamada a VAPID key recibida");
-    next();
-  }, pushNotificationController.getVapidKey);
-  
-  router.post("/push/subscribe", (req, res, next) => {
-    console.log("📱 Llamada a push/subscribe recibida:", req.body);
-    next();
-  }, verifyToken, pushNotificationController.subscribe);
-  
-  router.post("/push/unsubscribe", verifyToken, pushNotificationController.unsubscribe);
-  router.get("/push/subscriptions", verifyToken, pushNotificationController.getSubscriptions);
+  router.get(
+    "/push/vapid-key",
+    (req, res, next) => {
+      console.log("🔑 Llamada a VAPID key recibida");
+      next();
+    },
+    pushNotificationController.getVapidKey
+  );
+
+  router.post(
+    "/push/subscribe",
+    (req, res, next) => {
+      console.log("📱 Llamada a push/subscribe recibida:", req.body);
+      next();
+    },
+    verifyToken,
+    pushNotificationController.subscribe
+  );
+
+  router.post(
+    "/push/unsubscribe",
+    verifyToken,
+    pushNotificationController.unsubscribe
+  );
+  router.get(
+    "/push/subscriptions",
+    verifyToken,
+    pushNotificationController.getSubscriptions
+  );
   router.post("/push/test", verifyToken, pushNotificationController.sendTest);
   // #endregion
 

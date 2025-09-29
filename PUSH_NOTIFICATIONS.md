@@ -18,6 +18,7 @@ node generate-vapid-keys.js
 ```
 
 Este comando generará:
+
 - `VAPID_PUBLIC_KEY`: Clave pública (se puede compartir con el frontend)
 - `VAPID_PRIVATE_KEY`: Clave privada (mantener secreta)
 - `VAPID_SUBJECT`: Email de contacto (debe ser un email válido)
@@ -37,6 +38,7 @@ VAPID_SUBJECT=mailto:admin@tudominio.com
 ## 🚀 Despliegue
 
 1. **Generar claves** (solo la primera vez):
+
    ```bash
    node generate-vapid-keys.js
    ```
@@ -44,6 +46,7 @@ VAPID_SUBJECT=mailto:admin@tudominio.com
 2. **Configurar variables de entorno** en tu servidor
 
 3. **Reiniciar la aplicación**:
+
    ```bash
    pm2 restart tu-app
    ```
@@ -79,11 +82,13 @@ Authorization: Bearer tu-jwt-token
 ### Push notifications no llegan
 
 1. **Verificar logs**:
+
    ```bash
    pm2 logs tu-app | grep -i push
    ```
 
 2. **Verificar variables de entorno**:
+
    - `PUSH_NOTIFICATIONS_ENABLED=true`
    - Claves VAPID válidas
    - Email válido en `VAPID_SUBJECT`
@@ -101,6 +106,7 @@ Authorization: Bearer tu-jwt-token
 ### Usuario no recibe notificaciones
 
 1. **Verificar suscripción activa**:
+
    ```bash
    GET /api/v1/push/subscriptions
    ```
