@@ -153,3 +153,23 @@ Authorization: Bearer {{authToken}}
 
 {
 }
+
+### 22. SER: Obtener seguidores por ID de usuario (Frontend compatibility)
+GET {{baseUrl}}/SER/users/{{targetUserId}}/followers
+Authorization: Bearer {{authToken}}
+
+### 23. SER: Obtener siguiendo por ID de usuario (Frontend compatibility)
+GET {{baseUrl}}/SER/users/{{targetUserId}}/following
+Authorization: Bearer {{authToken}}
+
+### 24. SER: Obtener estadísticas de follow por ID de usuario (Frontend compatibility)
+GET {{baseUrl}}/SER/users/{{targetUserId}}/follow-status
+Authorization: Bearer {{authToken}}
+
+### 25. SER: Test con paginación - Followers
+GET {{baseUrl}}/SER/users/{{targetUserId}}/followers?limit=10&cursor=2024-01-15T10:00:00.000Z
+Authorization: Bearer {{authToken}}
+
+### 26. SER: Test con paginación - Following
+GET {{baseUrl}}/SER/users/{{targetUserId}}/following?limit=5
+Authorization: Bearer {{authToken}}

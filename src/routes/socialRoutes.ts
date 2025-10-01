@@ -120,6 +120,12 @@ router.delete(
     await unfollowUser(req, res);
   }
 );
+
+// Alias routes for frontend compatibility - Followers/Following by user ID
+router.get("/users/:userId/followers", verifyToken, listFollowers);
+router.get("/users/:userId/following", verifyToken, listFollowing);
+router.get("/users/:userId/follow-status", verifyToken, getFollowStats);
+
 router.get("/users/me", verifyToken, getMe);
 router.put("/users/me", verifyToken, updateMe);
 router.post(
