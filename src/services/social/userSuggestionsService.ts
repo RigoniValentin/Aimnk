@@ -233,6 +233,7 @@ export class UserSuggestionsService {
           _id: {
             $nin: [
               ...validCandidateIds.map((id) => new Types.ObjectId(id)),
+              ...followedUserIds.map((id) => new Types.ObjectId(id)),
               new Types.ObjectId(currentUserId),
             ],
           },
