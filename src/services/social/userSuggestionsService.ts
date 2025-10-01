@@ -41,7 +41,7 @@ export class UserSuggestionsService {
     proximity: 0.25, // Aumentado para proximidad geográfica
   };
 
-  private readonly MIN_SCORE = 30; // Reducido de 50 a 30 para comunidades pequeñas
+  private readonly MIN_SCORE = 10; // Muy permisivo para comunidades pequeñas
   private readonly ALGORITHM_VERSION = "v2.2"; // Nueva versión más permisiva
 
   async generateSuggestions(
@@ -66,9 +66,9 @@ export class UserSuggestionsService {
 
       // 2. Ajustar parámetros para comunidades pequeñas
       const dynamicExcludeRecent = isSmallCommunity
-        ? Math.min(excludeRecent, 3)
+        ? Math.min(excludeRecent, 1)
         : excludeRecent;
-      const dynamicMinScore = isSmallCommunity ? 30 : 50;
+      const dynamicMinScore = isSmallCommunity ? 5 : 50; // Muy bajo para comunidades pequeñas
 
       console.log(
         `📊 Comunidad detectada: ${totalUsers} usuarios, pequeña: ${isSmallCommunity}`
@@ -217,11 +217,57 @@ export class UserSuggestionsService {
       );
 
       // 7. Filtrar nulos y ordenar por score
-      const validSuggestions = scoredCandidates
+      let validSuggestions = scoredCandidates
         .filter(
           (suggestion): suggestion is SuggestionUser => suggestion !== null
         )
         .sort((a, b) => b.score - a.score);
+
+      // 7.1. Fallback para comunidades pequeñas: si no hay suficientes sugerencias, incluir todos los usuarios disponibles
+      if (isSmallCommunity && validSuggestions.length < limit) {
+        console.log(
+          `🔄 Fallback activado: solo ${validSuggestions.length} sugerencias válidas, agregando más usuarios...`
+        );
+
+        const fallbackUsers = await UserModel.find({
+          _id: {
+            $nin: [
+              ...validCandidateIds.map((id) => new Types.ObjectId(id)),
+              new Types.ObjectId(currentUserId),
+            ],
+          },
+          isActive: { $ne: false },
+        })
+          .select(
+            "username name avatar bio isVerified followersCount interests createdAt"
+          )
+          .limit(limit - validSuggestions.length)
+          .lean();
+
+        const fallbackSuggestions = fallbackUsers.map(
+          (user) =>
+            ({
+              id: user._id.toString(),
+              username: user.username,
+              displayName: user.name || user.username,
+              avatar: user.avatar || null,
+              bio: user.bio || null,
+              isVerified: user.isVerified || false,
+              followersCount: user.followersCount || 0,
+              mutualFollowers: 0,
+              mutualFollowersNames: [],
+              reason: "new_user" as const,
+              score: 50, // Score base para fallback
+              commonInterests: [],
+              recentActivity: "Usuario disponible",
+            } as SuggestionUser)
+        );
+
+        validSuggestions = [...validSuggestions, ...fallbackSuggestions];
+        console.log(
+          `✅ Fallback completado: ahora tenemos ${validSuggestions.length} sugerencias`
+        );
+      }
 
       // 8. Aplicar diversidad (no más de 2 de la misma razón consecutivos)
       const diversifiedResults = this.applyDiversityFilter(

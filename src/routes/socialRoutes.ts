@@ -162,6 +162,73 @@ router.get(
 router.put("/users/me/username", verifyToken, changeUsername);
 router.post("/users/cleanup-blobs", verifyToken, cleanBlobUrls); // Endpoint de mantenimiento
 router.get("/users/suggestions", verifyToken, getUserSuggestions); // 🎯 Sistema de sugerencias inteligente
+router.get("/users/suggestions-debug", verifyToken, async (req, res) => {
+  // Endpoint temporal para debugging de sugerencias
+  try {
+    const currentUserId = req.currentUser.id;
+
+    // Obtener todos los usuarios excepto el actual
+    const allUsers = await (
+      await import("@models/Users")
+    ).UserModel.find({
+      _id: { $ne: currentUserId },
+      isActive: { $ne: false },
+    })
+      .select("username name avatar bio followersCount interests createdAt")
+      .lean();
+
+    // Obtener usuarios ya seguidos
+    const follows = await (
+      await import("@models/Social/Follow")
+    ).FollowModel.find({
+      followerId: currentUserId,
+    })
+      .select("followingId")
+      .lean();
+
+    const followedIds = follows.map((f) => f.followingId.toString());
+
+    // Filtrar usuarios no seguidos
+    const availableUsers = allUsers.filter(
+      (user) => !followedIds.includes(user._id.toString())
+    );
+
+    res.json({
+      success: true,
+      debug: true,
+      data: {
+        suggestions: availableUsers.slice(0, 5).map((user) => ({
+          id: user._id.toString(),
+          username: user.username,
+          displayName: user.name,
+          avatar: user.avatar,
+          bio: user.bio,
+          followersCount: user.followersCount || 0,
+          reason: "debug_mode",
+          score: 90, // Score alto para que aparezcan
+          commonInterests: user.interests || [],
+          mutualFollowers: 0,
+          mutualFollowersNames: [],
+          isVerified: false,
+          recentActivity: "Usuario disponible",
+        })),
+      },
+      meta: {
+        total: availableUsers.length,
+        totalUsers: allUsers.length,
+        followedCount: followedIds.length,
+        returned: Math.min(availableUsers.length, 5),
+        executionTime: "1ms",
+      },
+    });
+  } catch (error: any) {
+    console.error("❌ Error en debug de sugerencias:", error);
+    res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+});
 router.get("/users/search", verifyToken, searchUsers);
 router.get("/users/username/:username", verifyToken, getUserByUsername); // 🆕 Buscar por username
 router.get("/users/:id/posts", verifyToken, getUserPosts);
