@@ -106,7 +106,7 @@ router.post(
   followsLimiter,
   async (req, res) => {
     // Convertir ruta de usuario a formato follows estándar
-    req.body = { ...req.body, userId: req.params.userId };
+    req.body = { ...req.body, targetUserId: req.params.userId };
     await followUser(req, res);
   }
 );
@@ -116,7 +116,7 @@ router.delete(
   followsLimiter,
   async (req, res) => {
     // Convertir ruta de usuario a formato follows estándar
-    req.body = { ...req.body, userId: req.params.userId };
+    req.body = { ...req.body, targetUserId: req.params.userId };
     await unfollowUser(req, res);
   }
 );

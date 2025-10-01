@@ -118,3 +118,38 @@ Authorization: Bearer {{authToken}}
 
 {
 }
+
+### === SER COMPATIBILITY ROUTES ===
+
+### 18. SER: Seguir usuario por ID en URL (Frontend compatibility)
+POST {{baseUrl}}/SER/users/{{targetUserId}}/follow
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+}
+
+### 19. SER: Dejar de seguir usuario por ID en URL (Frontend compatibility) 
+DELETE {{baseUrl}}/SER/users/{{targetUserId}}/follow
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+}
+
+### 20. SER: Test con usuario real en producción
+# @targetUserIdReal = 689a64f21b42abd1f487ddc4
+POST https://viajealser.com/api/v1/SER/users/689a64f21b42abd1f487ddc4/follow
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+}
+
+### 21. SER: Unfollow usuario real en producción
+DELETE https://viajealser.com/api/v1/SER/users/689a64f21b42abd1f487ddc4/follow
+Content-Type: application/json
+Authorization: Bearer {{authToken}}
+
+{
+}
