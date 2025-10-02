@@ -1,0 +1,112 @@
+###
+### Tests de Compresión de Imágenes - Sistema WhatsApp/Instagram Style
+### Base URL: http://localhost:3013/api/v1/SER
+###
+
+### Variables
+@baseUrl = http://localhost:3013/api/v1/SER
+@token = TU_TOKEN_AQUI
+
+###
+### 1. Test de compresión para Posts
+### POST /posts
+###
+POST {{baseUrl}}/posts
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data
+
+# Aquí se debe agregar:
+# - Campo "content": "¡Probando el nuevo sistema de compresión! 📸✨"
+# - Archivos "images": Seleccionar 1-4 imágenes (pueden ser de varios MB)
+# - Campo "imageCropData": [{"x": 50, "y": 50, "scale": 100}]
+
+### ESPERADO ✅:
+# - Status 201
+# - Imágenes automáticamente comprimidas (tamaño reducido 70-90%)
+# - Logs de compresión en consola del backend
+# - URLs de imágenes comprimidas en respuesta
+
+###
+### 2. Test de compresión para Avatar
+### POST /users/me/avatar
+###
+POST {{baseUrl}}/users/me/avatar
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data
+
+# Aquí se debe agregar:
+# - Campo "avatar": Seleccionar imagen (puede ser de varios MB)
+
+### ESPERADO ✅:
+# - Status 200
+# - Avatar comprimido a ~400x400px
+# - Tamaño reducido significativamente
+# - URL del avatar comprimido en respuesta
+
+###
+### 3. Test de compresión para Portada
+### POST /users/me/cover
+###
+POST {{baseUrl}}/users/me/cover
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data
+
+# Aquí se debe agregar:
+# - Campo "cover": Seleccionar imagen (puede ser de varios MB)
+
+### ESPERADO ✅:
+# - Status 200
+# - Portada comprimida a ~1920x600px
+# - Tamaño reducido significativamente
+# - URL de portada comprimida en respuesta
+
+###
+### 4. Verificar imágenes comprimidas
+### GET /uploads/{tipo}/{archivo}
+###
+GET http://localhost:3013/uploads/social/images-{timestamp}-{random}.jpeg
+# Cambiar por la URL real de una imagen subida
+
+### ESPERADO ✅:
+# - Imagen accesible
+# - Tamaño de archivo pequeño (< 1MB para posts)
+# - Calidad visual buena
+# - Carga rápida
+
+###
+### === BENEFICIOS ESPERADOS ===
+
+## 📊 Reducción de Tamaño:
+# - Posts: 3MB → ~90KB (97% reducción) como WhatsApp
+# - Avatares: 5MB → ~50KB (99% reducción)
+# - Portadas: 8MB → ~150KB (98% reducción)
+
+## 🚀 Mejoras de Performance:
+# - Carga más rápida de imágenes
+# - Menos ancho de banda
+# - Mejor experiencia móvil
+# - Menor uso de storage
+
+## 🔧 Compresión Automática:
+# - Frontend: Compresión antes del upload
+# - Backend: Compresión adicional + múltiples formatos
+# - WebP cuando es soportado
+# - Thumbnails para previews rápidos
+
+###
+### === LOGS DE DEBUG ===
+
+## En el Backend verás:
+# 🗜️ Iniciando compresión de X archivo(s) tipo: post/avatar/cover
+# 📸 Comprimiendo: filename.jpg (XMB)
+# ✅ Archivo comprimido reemplazado: filename.jpg
+# 🗜️ Imagen comprimida: X bytes → Y bytes (Z% reducción)
+
+## En el Frontend verás:
+# 📸 Iniciando compresión de imágenes para posts...
+# ✅ X imagen(es) comprimida(s) correctamente (Y% reducción promedio)
+# 🗜️ Progreso de compresión: X%
+
+###
+### NOTA: Las imágenes originales se reemplazan automáticamente 
+###       por las versiones comprimidas para ahorrar espacio.

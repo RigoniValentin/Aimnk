@@ -2,6 +2,12 @@ import { Router } from "express";
 import { verifyToken } from "@middlewares/auth";
 import { upload } from "@middlewares/upload";
 import {
+  compressPostImages,
+  compressAvatarImage,
+  compressCoverImage,
+  cleanupTempFiles,
+} from "@middlewares/imageCompression";
+import {
   postsLimiter,
   commentsLimiter,
   likesLimiter,
@@ -76,6 +82,8 @@ router.post(
   verifyToken,
   postsLimiter,
   upload.array("images", 4),
+  compressPostImages,
+  cleanupTempFiles,
   createPost
 );
 router.get("/posts/:id", verifyToken, getPost);

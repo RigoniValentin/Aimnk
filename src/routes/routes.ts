@@ -83,6 +83,11 @@ import {
   followsLimiter,
 } from "@middlewares/rateLimit";
 import { upload, uploadAvatar, uploadCover } from "@middlewares/upload";
+import {
+  compressAvatarImage,
+  compressCoverImage,
+  cleanupTempFiles,
+} from "@middlewares/imageCompression";
 import { pushNotificationController } from "@controllers/pushNotificationController";
 import {
   listAllQna,
@@ -243,24 +248,32 @@ export default () => {
     "/users/upload-avatar",
     verifyToken,
     uploadAvatar.single("avatar"),
+    compressAvatarImage,
+    cleanupTempFiles,
     uploadUserAvatar
   );
   router.post(
     "/users/me/avatar",
     verifyToken,
     uploadAvatar.single("avatar"),
+    compressAvatarImage,
+    cleanupTempFiles,
     uploadUserAvatar
   );
   router.post(
     "/users/upload-cover",
     verifyToken,
     uploadCover.single("cover"),
+    compressCoverImage,
+    cleanupTempFiles,
     uploadUserCover
   );
   router.post(
     "/users/me/cover",
     verifyToken,
     uploadCover.single("cover"),
+    compressCoverImage,
+    cleanupTempFiles,
     uploadUserCover
   );
   // #endregion
