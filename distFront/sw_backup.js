@@ -66,8 +66,6 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// ====== PUSH NOTIFICATIONS ======
-
 // Interceptar requests (estrategia Network First para la app dinámica)
 self.addEventListener("fetch", (event) => {
   // Solo manejar requests GET
