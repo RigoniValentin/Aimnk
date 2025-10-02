@@ -49,7 +49,7 @@ Authorization: Bearer {{authToken}}
   "title": "🧪 Test Personalizado",
   "body": "Esta es una notificación de prueba personalizada desde la API",
   "type": "test",
-  "actionUrl": "/comunidad"
+  "actionUrl": "/SER"
 }
 
 ### 6. Obtener estadísticas

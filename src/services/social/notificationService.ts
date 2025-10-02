@@ -284,7 +284,7 @@ export class NotificationService {
         toUserId: post.authorId,
         fromUserId: likedByUserId,
         relatedPostId: postId,
-        actionUrl: `/comunidad?post=${postId}`,
+        actionUrl: `/SER?post=${postId}`,
         priority: "medium",
         metadata: {
           postContent: post.content.substring(0, 100),
@@ -334,7 +334,7 @@ export class NotificationService {
         fromUserId: authorId,
         relatedPostId: postId,
         relatedCommentId: commentId,
-        actionUrl: `/comunidad?post=${postId}&comment=${commentId}`,
+        actionUrl: `/SER?post=${postId}&comment=${commentId}`,
         priority: "high",
         metadata: {
           postContent: post.content.substring(0, 100),
@@ -366,7 +366,7 @@ export class NotificationService {
         message: `${follower.name || follower.username} comenzó a seguirte`,
         toUserId: followedId,
         fromUserId: followerId,
-        actionUrl: `/comunidad?user=${followerId}`,
+        actionUrl: `/SER?user=${followerId}`,
         priority: "medium",
         metadata: {
           followerUsername: follower.username,
@@ -406,7 +406,7 @@ export class NotificationService {
           fromUserId: authorId,
           relatedPostId: comment.postId,
           relatedCommentId: commentId,
-          actionUrl: `/comunidad?post=${comment.postId}&comment=${commentId}`,
+          actionUrl: `/SER?post=${comment.postId}&comment=${commentId}`,
           priority: "high",
           metadata: {
             commentContent: comment.content.substring(0, 100),
@@ -698,7 +698,7 @@ export class NotificationService {
       data: {
         type: notification.type,
         notificationId: notification._id.toString(),
-        actionUrl: notification.actionUrl || "/comunidad",
+        actionUrl: notification.actionUrl || "/SER",
       },
       actions: [
         {
@@ -719,7 +719,7 @@ export class NotificationService {
             : "Alguien dio me gusta a tu publicación",
           data: {
             ...basePayload.data,
-            actionUrl: notification.actionUrl || "/comunidad",
+            actionUrl: notification.actionUrl || "/SER",
           },
         };
 
@@ -732,7 +732,7 @@ export class NotificationService {
             : "Alguien comentó tu publicación",
           data: {
             ...basePayload.data,
-            actionUrl: notification.actionUrl || "/comunidad",
+            actionUrl: notification.actionUrl || "/SER",
           },
         };
 
@@ -745,7 +745,7 @@ export class NotificationService {
             : "Tienes un nuevo seguidor",
           data: {
             ...basePayload.data,
-            actionUrl: `/comunidad?user=${fromUserInfo?.username || ""}`,
+            actionUrl: `/SER?user=${fromUserInfo?.username || ""}`,
           },
         };
 
@@ -758,7 +758,7 @@ export class NotificationService {
             : "Alguien te mencionó",
           data: {
             ...basePayload.data,
-            actionUrl: notification.actionUrl || "/comunidad",
+            actionUrl: notification.actionUrl || "/SER",
           },
         };
 
@@ -771,7 +771,7 @@ export class NotificationService {
             : "Alguien respondió a tu comentario",
           data: {
             ...basePayload.data,
-            actionUrl: notification.actionUrl || "/comunidad",
+            actionUrl: notification.actionUrl || "/SER",
           },
         };
 
@@ -782,7 +782,7 @@ export class NotificationService {
           body: notification.message || "Tienes una nueva notificación",
           data: {
             ...basePayload.data,
-            actionUrl: notification.actionUrl || "/comunidad",
+            actionUrl: notification.actionUrl || "/SER",
           },
         };
 
@@ -793,7 +793,7 @@ export class NotificationService {
           body: notification.message || "Tienes una nueva notificación",
           data: {
             ...basePayload.data,
-            actionUrl: notification.actionUrl || "/comunidad",
+            actionUrl: notification.actionUrl || "/SER",
           },
         };
     }

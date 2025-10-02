@@ -271,7 +271,7 @@ class PushNotificationController {
         data: {
           type: type || "custom",
           userId: targetId,
-          actionUrl: actionUrl || "/comunidad",
+          actionUrl: actionUrl || "/SER",
         },
       };
 

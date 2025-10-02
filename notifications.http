@@ -134,7 +134,7 @@ GET {{baseUrl}}/notifications
 #       },
 #       "relatedPost": {...},  // Si aplica
 #       "relatedComment": {...},  // Si aplica
-#       "actionUrl": "/comunidad?post=123",
+#       "actionUrl": "/SER?post=123",
 #       "metadata": {},
 #       "isRead": false,
 #       "priority": "medium",

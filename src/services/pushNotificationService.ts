@@ -440,7 +440,7 @@ class PushNotificationService {
       data: {
         type: "test",
         userId,
-        actionUrl: "/comunidad",
+        actionUrl: "/SER",
       },
       actions: [
         {
