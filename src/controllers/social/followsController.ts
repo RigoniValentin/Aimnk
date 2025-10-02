@@ -111,9 +111,15 @@ export const getFollowStats = async (
     const userId = req.params.userId;
     const viewerId = (req.query.viewerId as string) || req.currentUser?.id;
 
-    console.log(`📊 Obteniendo estadísticas de follows para usuario ${userId}`);
+    console.log(
+      `📊 Obteniendo estadísticas de follows para usuario ${userId} (viewer: ${viewerId})`
+    );
 
     const result = await service.getFollowStats(userId, viewerId);
+
+    console.log(
+      `✅ Stats obtenidas: follower=${result.followersCount}, following=${result.followingCount}, isFollowing=${result.isFollowingUser}, isFollowedBy=${result.isFollowedByUser}`
+    );
 
     res.json({
       success: true,

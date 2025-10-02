@@ -46,15 +46,15 @@ export const likesLimiter = rateLimit({
 });
 
 export const followsLimiter = rateLimit({
-  windowMs: isDevelopment ? 1 * 60 * 1000 : 60 * 60 * 1000, // Dev: 1 min, Prod: 1 hora
-  max: isDevelopment ? 100 : 20, // Dev: 100 follows/min, Prod: 20 follows/hora
+  windowMs: isDevelopment ? 1 * 60 * 1000 : 15 * 60 * 1000, // Dev: 1 min, Prod: 15 min
+  max: isDevelopment ? 100 : 50, // Dev: 100 follows/min, Prod: 50 follows/15min
   standardHeaders: true,
   legacyHeaders: false,
   message: {
     success: false,
     message: isDevelopment
       ? "Demasiados follows. Límite: 100 por minuto (desarrollo)"
-      : "Demasiados follows. Límite: 20 por hora",
+      : "Demasiados follows. Límite: 50 por cada 15 minutos",
     error: "RATE_LIMIT_EXCEEDED",
   },
 });

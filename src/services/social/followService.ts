@@ -115,6 +115,10 @@ export class FollowService {
 
     // Si hay un viewer, verificar relaciones
     if (viewerId && viewerId !== userId) {
+      console.log(
+        `🔍 Verificando relación entre viewer ${viewerId} y usuario ${userId}`
+      );
+
       const [following, followedBy] = await Promise.all([
         FollowModel.findOne({ followerId: viewerId, followingId: userId }),
         FollowModel.findOne({ followerId: userId, followingId: viewerId }),
@@ -122,6 +126,14 @@ export class FollowService {
 
       isFollowingUser = !!following;
       isFollowedByUser = !!followedBy;
+
+      console.log(
+        `🔍 Relaciones encontradas: viewer sigue al usuario=${isFollowingUser}, usuario sigue al viewer=${isFollowedByUser}`
+      );
+    } else {
+      console.log(
+        `🔍 Sin viewer o es el mismo usuario - no verificando relaciones`
+      );
     }
 
     return {
