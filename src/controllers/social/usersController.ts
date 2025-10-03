@@ -360,20 +360,59 @@ export const searchUsers = async (
   req: Request,
   res: Response
 ): Promise<void> => {
-  const q = String(req.query.q || "").trim();
-  if (!q) {
-    res.json({ success: true, data: [] });
-    return;
+  try {
+    const q = String(req.query.q || "").trim();
+
+    if (!q) {
+      res.json({
+        success: true,
+        data: [],
+        meta: {
+          total: 0,
+          query: "",
+        },
+      });
+      return;
+    }
+
+    // Buscar usuarios por nombre o username (case insensitive)
+    const users = await UserModel.find({
+      $and: [
+        // Solo usuarios activos
+        { isActive: { $ne: false } }, // Incluir usuarios sin campo isActive o con true
+        // Excluir al usuario actual si está autenticado
+        ...(req.currentUser?.id ? [{ _id: { $ne: req.currentUser.id } }] : []),
+        // Buscar en name o username
+        {
+          $or: [
+            { name: { $regex: q, $options: "i" } },
+            { username: { $regex: q, $options: "i" } },
+          ],
+        },
+      ],
+    })
+      .select(
+        "name username email avatar bio followersCount followingCount postsCount isVerified createdAt updatedAt"
+      )
+      .limit(20) // Limitar resultados
+      .sort({ followersCount: -1, createdAt: -1 }); // Ordenar por popularidad y recencia
+
+    res.json({
+      success: true,
+      data: users,
+      meta: {
+        total: users.length,
+        query: q,
+      },
+    });
+  } catch (error: any) {
+    console.error("Error searching users:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error interno del servidor",
+      error: error.message,
+    });
   }
-  const users = await UserModel.find({
-    $or: [
-      { username: { $regex: q, $options: "i" } },
-      { name: { $regex: q, $options: "i" } },
-    ],
-  })
-    .limit(20)
-    .select("username name avatar followersCount");
-  res.json({ success: true, data: users });
 };
 
 // Upload avatar para el usuario actual

@@ -1,0 +1,22 @@
+### Test de búsqueda de usuarios
+### Primero necesitamos un token válido - usar el de autenticación
+
+### Buscar usuarios con query "val"
+GET http://localhost:4000/api/v1/SER/users/search?q=val HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YjFmYjc2MDRmYmE1Mzg2YjQ2ODZiNyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwidXNlcm5hbWUiOiJ1c3VhcmlvQWRtaW4iLCJpYXQiOjE3Mzk5MzUzNTQsImV4cCI6MTczOTkzODk1NH0.tWuGftcNY8tK9lA3pyDDIkJ9gNKCgjmcXVI01ZNKaFo
+
+### Buscar usuarios con query "admin"
+GET http://localhost:4000/api/v1/SER/users/search?q=admin HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YjFmYjc2MDRmYmE1Mzg2YjQ2ODZiNyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwidXNlcm5hbWUiOiJ1c3VhcmlvQWRtaW4iLCJpYXQiOjE3Mzk5MzUzNTQsImV4cCI6MTczOTkzODk1NH0.tWuGftcNY8tK9lA3pyDDIkJ9gNKCgjmcXVI01ZNKaFo
+
+### Buscar usuarios con query "test"
+GET http://localhost:4000/api/v1/SER/users/search?q=test HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCA6IjY3YjFmYjc2MDRmYmE1Mzg2YjQ2ODZiNyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwidXNlcm5hbWUiOiJ1c3VhcmlvQWRtaW4iLCJpYXQiOjE3Mzk5MzUzNTQsImV4cCI6MTczOTkzOGk1NH0.tWuGftcNY8tK9lA3pyDDIkJ9gNKCgjmcXVI01ZNKaFo
+
+### Buscar usuarios sin query (debería devolver error)
+GET http://localhost:4000/api/v1/SER/users/search HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YjFmYjc2MDRmYmE1Mzg2YjQ2ODZiNyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwidXNlcm5hbWUiOiJ1c3VhcmlvQWRtaW4iLCJpYXQiOjE3Mzk5MzUzNTQsImV4cCI6MTczOTkzOGk1NH0.tWuGftcNY8tK9lA3pyDDIkJ9gNKCgjmcXVI01ZNKaFo
+
+### Buscar usuarios con query vacía
+GET http://localhost:4000/api/v1/SER/users/search?q= HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YjFmYjc2MDRmYmE1Mzg2YjQ2ODZiNyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwidXNlcm5hbWUiOiJ1c3VhcmlvQWRtaW4iLCJpYXQiOjE3Mzk5MzUzNTQsImV4cCI6MTczOTkzOGk1NH0.tWuGftcNY8tK9lA3pyDDIkJ9gNKCgjmcXVI01ZNKaFo

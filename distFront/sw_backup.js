@@ -6,70 +6,74 @@ const CACHE_NAME = "aimnk-community-v1";
 // Detectar la base URL según el entorno
 const getApiBaseUrl = () => {
   const hostname = self.location.hostname;
-
-  if (hostname === "localhost" || hostname === "127.0.0.1") {
-    return "http://localhost:3013/api/v1";
+  
+  if (hostname === 'localhost' || hostname === '127.0.0.1') {
+    return 'http://localhost:3013/api/v1';
   } else {
-    return "https://viajealser.com/api/v1";
+    return 'https://viajealser.com/api/v1';
   }
 };
 
 const API_BASE = getApiBaseUrl();
 
 // Instalar Service Worker
-self.addEventListener("install", (event) => {
-  console.log("🔧 Service Worker: Instalando...");
+self.addEventListener('install', (event) => {
+  console.log('🔧 Service Worker: Instalando...');
   event.waitUntil(
-    caches
-      .open(CACHE_NAME)
+    caches.open(CACHE_NAME)
       .then((cache) => {
-        console.log("📦 Service Worker: Cache abierto");
+        console.log('📦 Service Worker: Cache abierto');
         // Solo cachear recursos básicos que sabemos que existen
-        return cache.addAll(["/", "/manifest.json"]).catch((error) => {
-          console.warn("⚠️ Algunos recursos no se pudieron cachear:", error);
+        return cache.addAll([
+          '/',
+          '/manifest.json'
+        ]).catch((error) => {
+          console.warn('⚠️ Algunos recursos no se pudieron cachear:', error);
           // No fallar la instalación por errores de cache
           return Promise.resolve();
         });
       })
       .then(() => {
-        console.log("✅ Service Worker: Instalado correctamente");
+        console.log('✅ Service Worker: Instalado correctamente');
         // Forzar activación inmediata
         return self.skipWaiting();
       })
       .catch((error) => {
-        console.error("❌ Error instalando Service Worker:", error);
+        console.error('❌ Error instalando Service Worker:', error);
       })
   );
 });
 
 // Activar Service Worker
-self.addEventListener("activate", (event) => {
-  console.log("🔄 Service Worker: Activando...");
+self.addEventListener('activate', (event) => {
+  console.log('🔄 Service Worker: Activando...');
   event.waitUntil(
-    caches
-      .keys()
-      .then((cacheNames) => {
-        return Promise.all(
-          cacheNames.map((cacheName) => {
-            if (cacheName !== CACHE_NAME) {
-              console.log("🗑️ Eliminando cache anterior:", cacheName);
-              return caches.delete(cacheName);
-            }
-          })
-        );
-      })
-      .then(() => {
-        console.log("✅ Service Worker: Activado correctamente");
-        // Tomar control inmediato de todas las páginas
-        return self.clients.claim();
-      })
+    caches.keys().then((cacheNames) => {
+      return Promise.all(
+        cacheNames.map((cacheName) => {
+          if (cacheName !== CACHE_NAME) {
+            console.log('🗑️ Eliminando cache anterior:', cacheName);
+            return caches.delete(cacheName);
+          }
+        })
+      );
+    }).then(() => {
+      console.log('✅ Service Worker: Activado correctamente');
+      // Tomar control inmediato de todas las páginas
+      return self.clients.claim();
+    })
+  );
+});
+
+// ====== PUSH NOTIFICATIONS ======
+
   );
 });
 
 // Interceptar requests (estrategia Network First para la app dinámica)
-self.addEventListener("fetch", (event) => {
+self.addEventListener('fetch', (event) => {
   // Solo manejar requests GET
-  if (event.request.method !== "GET") {
+  if (event.request.method !== 'GET') {
     return;
   }
 
@@ -80,8 +84,7 @@ self.addEventListener("fetch", (event) => {
         // Si la respuesta es válida, clonarla y guardarla en cache
         if (response.status === 200) {
           const responseToCache = response.clone();
-          caches
-            .open(CACHE_NAME)
+          caches.open(CACHE_NAME)
             .then((cache) => {
               cache.put(event.request, responseToCache);
             })
@@ -93,14 +96,14 @@ self.addEventListener("fetch", (event) => {
       })
       .catch(() => {
         // Si falla la red, intentar servir desde cache
-        return caches.match(event.request).then((cachedResponse) => {
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          // Si no hay cache, devolver página offline básica
-          if (event.request.destination === "document") {
-            return new Response(
-              `
+        return caches.match(event.request)
+          .then((cachedResponse) => {
+            if (cachedResponse) {
+              return cachedResponse;
+            }
+            // Si no hay cache, devolver página offline básica
+            if (event.request.destination === 'document') {
+              return new Response(`
                 <!DOCTYPE html>
                 <html>
                 <head>
@@ -151,16 +154,14 @@ self.addEventListener("fetch", (event) => {
                   </div>
                 </body>
                 </html>
-              `,
-              {
+              `, {
                 headers: {
-                  "Content-Type": "text/html",
-                },
-              }
-            );
-          }
-          throw new Error("Sin conexión y sin cache disponible");
-        });
+                  'Content-Type': 'text/html',
+                }
+              });
+            }
+            throw new Error('Sin conexión y sin cache disponible');
+          });
       })
   );
 });
@@ -209,7 +210,7 @@ self.addEventListener("push", (event) => {
           title: "Ver en la comunidad",
         },
       ],
-    })
+    }),
   );
 });
 
@@ -240,7 +241,7 @@ self.addEventListener("notificationclick", (event) => {
         if (clients.openWindow) {
           return clients.openWindow(urlToOpen);
         }
-      })
+      }),
   );
 });
 
@@ -275,7 +276,7 @@ self.addEventListener("fetch", (event) => {
     caches.match(event.request).then((response) => {
       // Devolver desde cache si existe, sino fetch normal
       return response || fetch(event.request);
-    })
+    }),
   );
 });
 

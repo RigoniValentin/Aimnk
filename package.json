@@ -28,8 +28,8 @@
     "@controllers": "dist/src/controllers",
     "@models": "dist/src/models",
     "@middlewares": "dist/src/middlewares",
-    "@socket": "dist/src/socket",
     "@cronJobs": "dist/src/cronJobs",
+    "@socket": "dist/src/socket",
     "types": "dist/src/types",
     "app": "dist/src/app.js"
   },
