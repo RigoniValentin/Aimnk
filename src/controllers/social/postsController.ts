@@ -11,7 +11,7 @@ import { Types } from "mongoose";
 const postService = new PostService();
 
 const PostSchema = z.object({
-  content: z.string().min(1).max(500),
+  content: z.string().min(1).max(1000), // Aumentado de 500 a 1000 caracteres
 });
 
 export const createPost = async (
