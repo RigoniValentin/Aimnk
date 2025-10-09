@@ -19,6 +19,15 @@ export const createPost = async (
   res: Response
 ): Promise<void> => {
   try {
+    console.log(
+      "🔍 DEBUG: Creando post - Longitud del contenido:",
+      req.body.content?.length
+    );
+    console.log(
+      "🔍 DEBUG: Contenido recibido:",
+      req.body.content?.substring(0, 100) + "..."
+    );
+
     const parsed = PostSchema.parse(req.body);
     const images = Array.isArray((req as any).files)
       ? (req as any).files.map((f: any) => `/uploads/social/${f.filename}`)
@@ -106,7 +115,26 @@ export const createPost = async (
       console.error("❌ Error en notificaciones de menciones del post:", error);
     }
   } catch (err: any) {
-    res.status(400).json({ success: false, message: err.message });
+    console.error("❌ ERROR en createPost:", err);
+
+    // Si es error de validación de Zod, proporcionar detalles específicos
+    if (err.name === "ZodError") {
+      console.error("🔍 Errores de validación:", err.issues);
+      res.status(400).json({
+        success: false,
+        message:
+          "Datos inválidos: " +
+          err.issues
+            .map((i: any) => `${i.path.join(".")}: ${i.message}`)
+            .join(", "),
+        details: err.issues,
+      });
+      return;
+    }
+
+    res
+      .status(400)
+      .json({ success: false, message: err.message || "Error desconocido" });
   }
 };
 

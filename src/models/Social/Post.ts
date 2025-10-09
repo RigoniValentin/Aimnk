@@ -2,7 +2,7 @@ import mongoose, { Schema } from "mongoose";
 
 const PostSchema = new Schema(
   {
-    content: { type: String, required: true, minlength: 1, maxlength: 500 },
+    content: { type: String, required: true, minlength: 1, maxlength: 1000 }, // Aumentado de 500 a 1000
     images: {
       type: [String],
       default: [],

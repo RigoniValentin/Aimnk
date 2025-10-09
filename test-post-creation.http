@@ -1,0 +1,21 @@
+### Test crear post con texto largo
+POST https://viajealser.com/api/v1/SER/posts
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OWE2NDliMWI0MmFiZDFmNDg3ZGRjMSIsInVzZXJuYW1lIjoidmFsZWRldiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzYwMDQ1NDc4LCJleHAiOjE3NjEzNDE0Nzh9.DJqbV8SNddnGcB9n5QiYTUaUNnH9oJDyB9qxIAguKYQ
+Content-Type: application/json
+
+{
+  "content": "Bienvenida a SER – Seres en Red\n\nBienvenido, Ser que despierta.\nEste es un espacio donde la esencia se expresa,\ndonde cada alma recuerda su brillo\ny lo comparte en encuentros que entretejen vida.\n\nAquí el arte florece como ofrenda,\nlos dones se intercambian como semillas,\ny la comunidad danza en círculos de expansión.\n\nSER es red viva,\ntejido de corazones que crean, sienten y se abren.\nDesde lo virtual hasta lo presencial,\nemanamos juntos la belleza de existir,\nla alegría de dar, recibir y ser."
+}
+
+### Test con contenido más corto (para verificar que el endpoint funciona)
+POST https://viajealser.com/api/v1/SER/posts
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OWE2NDliMWI0MmFiZDFmNDg3ZGRjMSIsInVzZXJuYW1lIjoidmFsZWRldiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzYwMDQ1NDc4LCJleHAiOjE3NjEzNDE0Nzh9.DJqbV8SNddnGcB9n5QiYTUaUNnH9oJDyB9qxIAguKYQ
+Content-Type: application/json
+
+{
+  "content": "Test post corto para verificar funcionamiento básico"
+}
+
+### Test para verificar el endpoint y obtener más detalles del error
+GET https://viajealser.com/api/v1/SER/posts/feed?page=1&limit=1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4OWE2NDliMWI0MmFiZDFmNDg3ZGRjMSIsInVzZXJuYW1lIjoidmFsZWRldiIsInJvbGUiOiJ1c2VyIiwiaWF0IjoxNzYwMDQ1NDc4LCJleHAiOjE3NjEzNDE0Nzh9.DJqbV8SNddnGcB9n5QiYTUaUNnH9oJDyB9qxIAguKYQ
