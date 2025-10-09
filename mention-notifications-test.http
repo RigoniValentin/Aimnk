@@ -1,0 +1,31 @@
+### Create a post with mentions to test notification system
+POST http://localhost:5000/api/comunidad/posts
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "content": "¡Hola @admin y @testuser! ¿Cómo están? Este es un post de prueba para menciones 🚀"
+}
+
+### Create a comment with mentions
+POST http://localhost:5000/api/comunidad/posts/POST_ID_HERE/comments
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "content": "Excelente post @admin! Me encanta esta funcionalidad @testuser",
+  "postId": "POST_ID_HERE"
+}
+
+### Get notifications to verify mentions were sent
+GET http://localhost:5000/api/notifications
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Test multiple mentions in one post
+POST http://localhost:5000/api/comunidad/posts
+Authorization: Bearer YOUR_TOKEN_HERE
+Content-Type: application/json
+
+{
+  "content": "Reunión de equipo: @admin @dev @marketing @support - Por favor confirmen asistencia para mañana a las 10am"
+}

@@ -86,6 +86,25 @@ export const createPost = async (
     } catch (e) {
       // swallow ws errors
     }
+
+    // 🔔 Detectar y notificar menciones (@username) en el post
+    try {
+      const mentions = NotificationService.extractMentions(parsed.content);
+      if (mentions.length > 0) {
+        const mentionedUserIds = await NotificationService.resolveUsernames(
+          mentions
+        );
+        if (mentionedUserIds.length > 0) {
+          await NotificationService.handlePostMention(
+            new Types.ObjectId(String(post._id)),
+            mentionedUserIds,
+            new Types.ObjectId(req.currentUser.id)
+          );
+        }
+      }
+    } catch (error) {
+      console.error("❌ Error en notificaciones de menciones del post:", error);
+    }
   } catch (err: any) {
     res.status(400).json({ success: false, message: err.message });
   }

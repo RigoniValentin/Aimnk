@@ -1,0 +1,17 @@
+### Test de endpoint getUserByUsername para menciones
+### Este endpoint se usa cuando se hace clic en una mención (@username)
+
+### Buscar usuario por username "guestTest"
+GET http://localhost:4000/api/v1/SER/users/username/guestTest HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YjFmYjc2MDRmYmE1Mzg2YjQ2ODZiNyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwidXNlcm5hbWUiOiJ1c3VhcmlvQWRtaW4iLCJpYXQiOjE3Mzk5MzUzNTQsImV4cCI6MTczOTkzOGk1NH0.tWuGftcNY8tK9lA3pyDDIkJ9gNKCgjmcXVI01ZNKaFo
+
+### Buscar usuario por username "usuarioAdmin"  
+GET http://localhost:4000/api/v1/SER/users/username/usuarioAdmin HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YjFmYjc2MDRmYmE1Mzg2YjQ2ODZiNyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwidXNlcm5hbWUiOiJ1c3VhcmlvQWRtaW4iLCJpYXQiOjE3Mzk5MzUzNTQsImV4cCI6MTczOTkzOGk1NH0.tWuGftcNY8tK9lA3pyDDIkJ9gNKCgjmcXVI01ZNKaFo
+
+### Buscar usuario que no existe
+GET http://localhost:4000/api/v1/SER/users/username/usuarioInexistente HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YjFmYjc2MDRmYmE1Mzg2YjQ2ODZiNyIsImVtYWlsIjoiYWRtaW5AZ21haWwuY29tIiwidXNlcm5hbWUiOiJ1c3VhcmlvQWRtaW4iLCJpYXQiOjE3Mzk5MzUzNTQsImV4cCI6MTczOTkzOGk1NH0.tWuGftcNY8tK9lA3pyDDIkJ9gNKCgjmcXVI01ZNKaFo
+
+### Probar sin autenticación (debería fallar)
+GET http://localhost:4000/api/v1/SER/users/username/guestTest HTTP/1.1

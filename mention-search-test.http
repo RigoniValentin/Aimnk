@@ -1,0 +1,15 @@
+### Test search users for mentions
+GET http://localhost:5000/api/comunidad/search-users?q=admin
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Test with short query (should return empty)
+GET http://localhost:5000/api/comunidad/search-users?q=a
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Test with non-existent user
+GET http://localhost:5000/api/comunidad/search-users?q=nonexistent123
+Authorization: Bearer YOUR_TOKEN_HERE
+
+### Test with empty query
+GET http://localhost:5000/api/comunidad/search-users?q=
+Authorization: Bearer YOUR_TOKEN_HERE

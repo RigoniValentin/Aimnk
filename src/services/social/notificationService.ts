@@ -420,6 +420,45 @@ export class NotificationService {
   }
 
   /**
+   * Manejar menciones (@username) en posts
+   */
+  static async handlePostMention(
+    postId: Types.ObjectId,
+    mentionedUserIds: Types.ObjectId[],
+    authorId: Types.ObjectId
+  ) {
+    try {
+      const [post, author] = await Promise.all([
+        PostModel.findById(postId),
+        UserModel.findById(authorId).select("username name avatar"),
+      ]);
+
+      if (!post || !author) return;
+
+      for (const mentionedUserId of mentionedUserIds) {
+        if (mentionedUserId.equals(authorId)) continue; // No auto-mencionar
+
+        await this.createNotification({
+          type: "mention",
+          title: "Te mencionaron",
+          message: `${author.name || author.username} te mencionó en un post`,
+          toUserId: mentionedUserId,
+          fromUserId: authorId,
+          relatedPostId: postId,
+          actionUrl: `/SER?post=${postId}`,
+          priority: "high",
+          metadata: {
+            postContent: post.content.substring(0, 100),
+            authorUsername: author.username,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("❌ Error en handlePostMention:", error);
+    }
+  }
+
+  /**
    * Obtener notificaciones de un usuario con paginación
    */
   static async getUserNotifications(
