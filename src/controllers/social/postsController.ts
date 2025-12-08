@@ -29,9 +29,28 @@ export const createPost = async (
     );
 
     const parsed = PostSchema.parse(req.body);
+
+    // Procesar imágenes
     const images = Array.isArray((req as any).files)
-      ? (req as any).files.map((f: any) => `/uploads/social/${f.filename}`)
+      ? (req as any).files
+          .filter((f: any) => f.mimetype.startsWith("image/"))
+          .map((f: any) => `/uploads/social/${f.filename}`)
       : [];
+
+    // Procesar video si existe
+    const processedVideo = (req as any).processedVideo;
+    let videoData = undefined;
+
+    if (processedVideo) {
+      videoData = {
+        url: processedVideo.url,
+        thumbnail: processedVideo.thumbnailUrl,
+        duration: processedVideo.duration,
+        size: processedVideo.size,
+        format: processedVideo.format,
+      };
+      console.log("🎥 Post con video:", videoData);
+    }
 
     // Procesar imageCropData si viene en la petición
     let imageCropData: any[] = [];
@@ -54,17 +73,19 @@ export const createPost = async (
       }
     }
 
-    console.log("📸 Creando post con imageCropData:", {
+    console.log("📸 Creando post con datos:", {
       imagesCount: images.length,
       cropDataCount: imageCropData.length,
-      cropData: imageCropData,
+      hasVideo: !!videoData,
+      videoDuration: videoData?.duration,
     });
 
     const post = await postService.createPost(
       req.currentUser.id,
       parsed.content,
       images,
-      imageCropData
+      imageCropData,
+      videoData
     );
     res.json({ success: true, data: post });
     // Broadcast websocket events
@@ -83,6 +104,9 @@ export const createPost = async (
         content: post.content,
         images: post.images,
         imageCropData: post.imageCropData,
+        video: post.video,
+        videoThumbnail: post.videoThumbnail,
+        videoDuration: post.videoDuration,
         createdAt: post.createdAt,
         likes: post.likesCount,
         comments: post.commentsCount,

@@ -15,6 +15,27 @@ const PostSchema = new Schema(
         scale: { type: Number, default: 100 }, // Escala en porcentaje (50-200)
       },
     ],
+    // 🎥 Campos de Video
+    video: {
+      type: String, // URL del video comprimido
+      default: null,
+    },
+    videoThumbnail: {
+      type: String, // URL del thumbnail generado del video
+      default: null,
+    },
+    videoDuration: {
+      type: Number, // Duración en segundos
+      default: null,
+    },
+    videoFormat: {
+      type: String, // mp4, webm, etc.
+      default: null,
+    },
+    videoSize: {
+      type: Number, // Tamaño en bytes del video comprimido
+      default: null,
+    },
     authorId: {
       type: Schema.Types.ObjectId,
       ref: "User",

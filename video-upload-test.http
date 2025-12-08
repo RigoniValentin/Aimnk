@@ -1,0 +1,135 @@
+### 🎥 VIDEO UPLOAD TESTS - Sistema de Videos para Posts
+### Pruebas completas del sistema de subida y compresión de videos
+
+@baseUrl = http://localhost:3000/api/social
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3MzBlMWI4ZjQ2YWRmOGVhZjc2MjE5OSIsImVtYWlsIjoidmFsZW50aW5AZ21haWwuY29tIiwiaWF0IjoxNzMxMzI3ODY0LCJleHAiOjE3MzM5MTk4NjR9.kXBUBOK1K9bYiLK_FG8_xZPj-ZGiLx8Ov3-p9czmOgE
+
+###
+### 1️⃣ Crear Post con Video (Usar un video de prueba)
+POST {{baseUrl}}/posts
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="content"
+
+¡Mi primer video en Aimnk! 🎥✨ #video #test
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="media"; filename="test-video.mp4"
+Content-Type: video/mp4
+
+< ./test-assets/sample-video.mp4
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+### 2️⃣ Crear Post con Imágenes (debe seguir funcionando)
+POST {{baseUrl}}/posts
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="content"
+
+Post con imágenes tradicional 📸 #fotos #test
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="media"; filename="test-image.jpg"
+Content-Type: image/jpeg
+
+< ./test-assets/sample-image.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+### 3️⃣ Obtener Feed (verificar que los videos se muestren)
+GET {{baseUrl}}/posts/feed?page=1&limit=10
+Authorization: Bearer {{token}}
+
+###
+### 4️⃣ Obtener un Post Individual con Video
+GET {{baseUrl}}/posts/673f1234567890abcdef1234
+Authorization: Bearer {{token}}
+
+###
+### 5️⃣ Test de Validación - Video muy largo (>30s) - Debe FALLAR
+POST {{baseUrl}}/posts
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="content"
+
+Video muy largo que debe ser rechazado ⏱️
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="media"; filename="long-video.mp4"
+Content-Type: video/mp4
+
+< ./test-assets/long-video.mp4
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+### 6️⃣ Test de Validación - Video + Imagen juntos - Debe FALLAR
+POST {{baseUrl}}/posts
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="content"
+
+Intentando subir video e imagen juntos (no permitido)
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="media"; filename="test-video.mp4"
+Content-Type: video/mp4
+
+< ./test-assets/sample-video.mp4
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="media"; filename="test-image.jpg"
+Content-Type: image/jpeg
+
+< ./test-assets/sample-image.jpg
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+### 7️⃣ Test de Validación - Múltiples Videos - Debe FALLAR
+POST {{baseUrl}}/posts
+Authorization: Bearer {{token}}
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="content"
+
+Intentando subir 2 videos (no permitido)
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="media"; filename="video1.mp4"
+Content-Type: video/mp4
+
+< ./test-assets/video1.mp4
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="media"; filename="video2.mp4"
+Content-Type: video/mp4
+
+< ./test-assets/video2.mp4
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+### 8️⃣ Explorar Posts (verificar videos en explore)
+GET {{baseUrl}}/posts/explore?page=1&limit=10
+Authorization: Bearer {{token}}
+
+###
+### 9️⃣ Like a un Post con Video
+POST {{baseUrl}}/posts/673f1234567890abcdef1234/like
+Authorization: Bearer {{token}}
+
+###
+### 🔟 Compartir Post con Video
+POST {{baseUrl}}/posts/673f1234567890abcdef1234/share
+Authorization: Bearer {{token}}
+
+###
+### ✅ NOTAS:
+# - Los videos se comprimen automáticamente con FFmpeg
+# - Máximo 30 segundos de duración
+# - Solo 1 video por post
+# - No se pueden mezclar videos e imágenes
+# - Se genera thumbnail automáticamente
+# - Compresión similar a Instagram/Twitter
+# - Formato final: MP4 (H.264 + AAC)

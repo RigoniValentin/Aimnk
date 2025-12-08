@@ -1,12 +1,13 @@
 import { Router } from "express";
 import { verifyToken } from "@middlewares/auth";
-import { upload } from "@middlewares/upload";
+import { upload, uploadPost } from "@middlewares/upload";
 import {
   compressPostImages,
   compressAvatarImage,
   compressCoverImage,
   cleanupTempFiles,
 } from "@middlewares/imageCompression";
+import { compressPostVideo } from "@middlewares/videoCompression";
 import {
   postsLimiter,
   commentsLimiter,
@@ -81,8 +82,9 @@ router.post(
   "/posts",
   verifyToken,
   postsLimiter,
-  upload.array("images", 4),
-  compressPostImages,
+  uploadPost.array("media", 4), // Cambiado de "images" a "media" para soportar videos
+  compressPostVideo, // Primero procesar video si existe
+  compressPostImages, // Luego procesar imágenes
   cleanupTempFiles,
   createPost
 );

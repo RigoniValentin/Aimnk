@@ -15,19 +15,38 @@ export class PostService {
     authorId: string,
     content: string,
     images: string[],
-    imageCropData?: any[]
+    imageCropData?: any[],
+    videoData?: {
+      url: string;
+      thumbnail: string;
+      duration: number;
+      size: number;
+      format: string;
+    }
   ) {
     const clean = sanitizeContent(content);
     const hashtags = extractHashtags(clean);
     const mentions = extractMentions(clean);
-    const post = await PostModel.create({
+
+    const postData: any = {
       authorId: new Types.ObjectId(authorId),
       content: clean,
       images: images?.slice(0, 4) || [],
       imageCropData: imageCropData || [],
       hashtags,
       mentions,
-    });
+    };
+
+    // Si hay video, agregarlo al post
+    if (videoData) {
+      postData.video = videoData.url;
+      postData.videoThumbnail = videoData.thumbnail;
+      postData.videoDuration = videoData.duration;
+      postData.videoSize = videoData.size;
+      postData.videoFormat = videoData.format;
+    }
+
+    const post = await PostModel.create(postData);
     await UserModel.findByIdAndUpdate(authorId, { $inc: { postsCount: 1 } });
     return post;
   }
