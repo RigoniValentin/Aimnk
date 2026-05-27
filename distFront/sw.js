@@ -3,7 +3,6 @@
 
 const CACHE_NAME = "aimnk-community-v1";
 
-// Detectar la base URL según el entorno
 const getApiBaseUrl = () => {
   const hostname = self.location.hostname;
 
